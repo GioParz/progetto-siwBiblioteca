@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <title>I Tuoi Consigli di Lettura - BibliotecAmica</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+
+    <div class="top-bar">
+        <div class="top-bar-right">
+            <span class="user-menu">
+                <span class="welcome-user">Ciao, <strong sec:authentication="name">Utente</strong>!</span>
+                <form th:action="@{/logout}" method="post">
+                    <button type="submit" class="logout-btn">Logout</button>
+                </form>
+            </span>
+        </div>
+    </div>
+
+    <a th:href="@{/}" class="logo-wrapper">
+        <span class="brand-title">📚 Biblio<span>Hub</span></span>
+    </a>
+
+    <main class="main-content">
+
+        <div>
+            <div class="title-box">I Tuoi Consigli di Lettura</div>
+        </div>
+
+        <p class="welcome-text">
+            Analizzando i libri che hai valutato positivamente nella tua libreria,
+            questi sono i titoli che potrebbero piacerti.
+        </p>
+
+        <div th:if="${#lists.isEmpty(libriConsigliati)}" class="no-data-msg">
+            Non abbiamo ancora abbastanza informazioni sui tuoi gusti.
+            Aggiungi e valuta con almeno 4 stelle qualche libro nella tua
+            <a th:href="@{/libreria}">libreria personale</a> per ricevere consigli su misura!
+        </div>
+
+        <div th:each="libro : ${libriConsigliati}" class="library-item-card">
+            <img th:if="${libro.copertinaUrl != null and !libro.copertinaUrl.isEmpty()}"
+                 th:src="${libro.copertinaUrl}" alt="Copertina" class="book-cover-small" />
+            <div th:unless="${libro.copertinaUrl != null and !libro.copertinaUrl.isEmpty()}"
+                 class="book-cover-small book-cover-placeholder">📖</div>
+
+            <div class="library-item-details">
+                <a th:href="@{/libro/{id}(id=${libro.id})}" class="library-item-title" th:text="${libro.titolo}">Titolo Libro</a>
+                <div class="library-item-meta">
+                    <span th:if="${libro.autore != null}" th:text="${libro.autore.nome} + ' ' + ${libro.autore.cognome}">Autore</span>
+                    &middot;
+                    <span th:if="${libro.genere != null}" class="badge-genere" th:text="${libro.genere.nome}">Genere</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="margin-top-lg">
+            <a th:href="@{/libreria}" class="back-link">← Torna alla tua Libreria</a>
+        </div>
+    </main>
+
+</body>
+</html>

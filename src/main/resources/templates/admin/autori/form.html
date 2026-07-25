@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Nuovo Autore - BibliotecAmica</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+
+    <div class="top-bar admin-bar">
+        <div class="top-bar-right">
+            <span class="welcome-user"><strong class="panel-admin-text">PANNELLO ADMIN</strong></span>
+        </div>
+    </div>
+
+    <a th:href="@{/}" class="logo-wrapper">
+        <span class="brand-title">📚 Biblio<span>Hub</span></span>
+    </a>
+
+    <main class="main-content">
+        <div>
+            <div class="title-box box-admin">Nuovo Autore</div>
+        </div>
+
+        <form th:action="@{/admin/autori}" th:object="${autore}" method="post" class="library-form">
+
+            <div th:if="${#fields.hasGlobalErrors()}" class="error-msg">
+                <ul class="no-margin">
+                    <li th:each="err : ${#fields.globalErrors()}" th:text="${err}">Errore di validazione globale</li>
+                </ul>
+            </div>
+
+            <div class="form-group">
+                <label>Nome</label>
+                <input type="text" th:field="*{nome}" placeholder="Es: Fëdor" />
+                <span th:if="${#fields.hasErrors('nome')}" th:errors="*{nome}" class="field-error"></span>
+            </div>
+
+            <div class="form-group">
+                <label>Cognome</label>
+                <input type="text" th:field="*{cognome}" placeholder="Es: Dostoevskij" />
+                <span th:if="${#fields.hasErrors('cognome')}" th:errors="*{cognome}" class="field-error"></span>
+            </div>
+
+            <div class="form-group">
+                <label>Nazionalità</label>
+                <input type="text" th:field="*{nazionalita}" placeholder="Es: Russa" />
+                <span th:if="${#fields.hasErrors('nazionalita')}" th:errors="*{nazionalita}" class="field-error"></span>
+            </div>
+
+            <div class="form-group">
+                <label>Biografia (opzionale)</label>
+                <textarea th:field="*{biografia}" rows="5" placeholder="Brevi cenni biografici..."></textarea>
+                <span th:if="${#fields.hasErrors('biografia')}" th:errors="*{biografia}" class="field-error"></span>
+            </div>
+
+            <div class="margin-top-lg">
+                <button type="submit" class="main-link admin-btn">Registra Autore</button>
+            </div>
+        </form>
+
+        <div class="margin-top-lg">
+            <a th:href="@{/autori}" class="back-link">Annulla e torna alla lista</a>
+        </div>
+    </main>
+
+</body>
+</html>

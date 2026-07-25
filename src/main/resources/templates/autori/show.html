@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <title th:text="${autore.nome} + ' ' + ${autore.cognome} + ' - BiblioHub'">Dettaglio Autore</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+
+    <div class="top-bar">
+        <div class="top-bar-right">
+            <span sec:authorize="isAnonymous()">
+                <a th:href="@{/login}" class="login-link">Accedi</a>
+            </span>
+            <span sec:authorize="isAuthenticated()" class="user-menu">
+                <span class="welcome-user">Ciao, <strong sec:authentication="name">Utente</strong>!</span>
+                <form th:action="@{/logout}" method="post">
+                    <button type="submit" class="logout-btn">Logout</button>
+                </form>
+            </span>
+        </div>
+    </div>
+
+    <a th:href="@{/}" class="logo-wrapper">
+        <span class="brand-title">📚 Biblio<span>Hub</span></span>
+    </a>
+
+    <main class="main-content">
+
+        <div>
+            <div class="title-box" th:text="${autore.nome} + ' ' + ${autore.cognome}">Nome Autore</div>
+        </div>
+
+        <div class="info-box">
+            <p><strong>Nazionalità:</strong> <span th:text="${autore.nazionalita}">Nazionalità</span></p>
+            <p th:if="${autore.biografia != null and !autore.biografia.isEmpty()}">
+                <strong>Biografia:</strong><br>
+                <span th:text="${autore.biografia}">Biografia dell'autore...</span>
+            </p>
+        </div>
+
+        <!-- Sezione opere dell'autore -->
+        <h2 class="section-title">Opere di <span th:text="${autore.cognome}">Autore</span></h2>
+
+        <p th:if="${libri.isEmpty()}" class="no-data-msg">Nessun libro di questo autore presente nel catalogo.</p>
+
+        <table class="library-table table-centered" th:if="${!libri.isEmpty()}">
+            <thead>
+                <tr>
+                    <th>Titolo</th>
+                    <th>Genere</th>
+                    <th>Anno</th>
+                    <th>Azione</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:each="libro : ${libri}">
+                    <td th:text="${libro.titolo}">Titolo</td>
+                    <td>
+                        <a th:if="${libro.genere != null}" th:href="@{/genere/{id}(id=${libro.genere.id})}" class="badge-genere"
+                           th:text="${libro.genere.nome}">Genere</a>
+                    </td>
+                    <td th:text="${libro.annoPubblicazione}">Anno</td>
+                    <td>
+                        <div class="action-buttons-cell">
+                            <a th:href="@{/libro/{id}(id=${libro.id})}" class="action-link-view">Visualizza</a>
+                        </div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+
+        <div class="margin-top-lg">
+            <a th:href="@{/autori}" class="back-link">← Torna alla lista Autori</a>
+        </div>
+    </main>
+
+</body>
+</html>

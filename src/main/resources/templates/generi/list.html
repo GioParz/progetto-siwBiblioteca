@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <title>Generi Letterari - BibliotecAmica</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+
+    <div class="top-bar">
+        <div class="top-bar-right">
+            <span sec:authorize="isAnonymous()">
+                <a th:href="@{/login}" class="login-link">Accedi</a>
+            </span>
+            <span sec:authorize="isAuthenticated()" class="user-menu">
+                <span class="welcome-user">Ciao, <strong sec:authentication="name">Utente</strong>!</span>
+                <form th:action="@{/logout}" method="post">
+                    <button type="submit" class="logout-btn">Logout</button>
+                </form>
+            </span>
+        </div>
+    </div>
+
+    <a th:href="@{/}" class="logo-wrapper">
+        <span class="brand-title">📚 Biblio<span>Hub</span></span>
+    </a>
+
+    <main class="main-content">
+
+        <div>
+            <div class="title-box">Generi Letterari</div>
+        </div>
+
+        <!-- Solo l'ADMIN può registrare un nuovo genere -->
+        <div sec:authorize="hasAuthority('ADMIN')" class="margin-bottom-lg">
+            <a th:href="@{/admin/genere/new}" class="main-link admin-btn">+ Aggiungi Nuovo Genere</a>
+        </div>
+
+        <div th:if="${#lists.isEmpty(generi)}" class="no-data-msg">
+            Non ci sono generi registrati nel sistema.
+        </div>
+
+        <table class="library-table table-centered" th:unless="${#lists.isEmpty(generi)}">
+            <thead>
+                <tr>
+                    <th>Nome Genere</th>
+                    <th>Descrizione</th>
+                    <th>Azioni</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:each="genere : ${generi}">
+                    <td th:text="${genere.nome}">Nome Genere</td>
+                    <td th:text="${genere.descrizione}">Descrizione</td>
+                    <td>
+                        <div class="action-buttons-cell">
+                            <a th:href="@{/genere/{id}(id=${genere.id})}" class="action-link-view">Visualizza</a>
+                        </div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+
+        <div class="margin-top-lg">
+            <a th:href="@{/}" class="back-link">← Torna alla Home</a>
+        </div>
+    </main>
+
+</body>
+</html>

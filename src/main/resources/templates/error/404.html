@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Pagina Non Trovata - BibliotecAmica</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+
+    <a th:href="@{/}" class="logo-wrapper">
+        <span class="brand-title">📚 Biblio<span>Hub</span></span>
+    </a>
+
+    <div class="error-container">
+        <div class="error-icon">📖</div>
+        <div class="error-code">404</div>
+        <p class="error-subtitle">Questo scaffale è vuoto.</p>
+        <p class="error-detail" th:text="${errorMessage} ?: 'La pagina o la risorsa che cerchi non esiste, o è stata rimossa.'">
+            Dettaglio errore
+        </p>
+        <a th:href="@{/}" class="main-link">Torna alla Home</a>
+    </div>
+
+</body>
+</html>

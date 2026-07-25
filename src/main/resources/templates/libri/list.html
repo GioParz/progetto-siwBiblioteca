@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <title>Catalogo Libri - BibliotecAmica</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+
+    <div class="top-bar">
+        <div class="top-bar-right">
+            <span sec:authorize="isAnonymous()">
+                <a th:href="@{/login}" class="login-link">Accedi</a>
+            </span>
+            <span sec:authorize="isAuthenticated()" class="user-menu">
+                <span class="welcome-user">Ciao, <strong sec:authentication="name">Utente</strong>!</span>
+                <form th:action="@{/logout}" method="post">
+                    <button type="submit" class="logout-btn">Logout</button>
+                </form>
+            </span>
+        </div>
+    </div>
+
+    <a th:href="@{/}" class="logo-wrapper">
+        <span class="brand-title">📚 Biblio<span>Hub</span></span>
+    </a>
+
+    <main class="main-content">
+
+        <div>
+            <div class="title-box">Catalogo Libri</div>
+        </div>
+
+        <!-- Solo l'ADMIN può inserire un nuovo libro -->
+        <div sec:authorize="hasAuthority('ADMIN')" class="margin-bottom-lg">
+            <a th:href="@{/admin/libro/new}" class="main-link admin-btn">+ Aggiungi Nuovo Libro</a>
+        </div>
+
+        <!-- Ricerca e filtro per genere -->
+        <form th:action="@{/libri}" method="get" class="search-form">
+            <div class="form-group">
+                <label>Cerca per titolo o autore</label>
+                <input type="text" name="ricerca" th:value="${ricerca}" placeholder="Es: Dostoevskij" />
+            </div>
+            <div class="form-group">
+                <label>Genere</label>
+                <select name="genereId">
+                    <option value="">Tutti i generi</option>
+                    <option th:each="genere : ${generi}"
+                            th:value="${genere.id}"
+                            th:text="${genere.nome}"
+                            th:selected="${genereId != null and genereId == genere.id}">Genere</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>&nbsp;</label>
+                <button type="submit" class="main-link padding-btn-sm">Cerca</button>
+            </div>
+        </form>
+
+        <!-- Messaggio lista vuota -->
+        <div th:if="${#lists.isEmpty(libri)}" class="no-data-msg">
+            Nessun libro trovato in catalogo con i criteri selezionati.
+        </div>
+
+        <!-- Tabella dei libri -->
+        <table class="library-table table-centered" th:unless="${#lists.isEmpty(libri)}">
+            <thead>
+                <tr>
+                    <th>Copertina</th>
+                    <th>Titolo</th>
+                    <th>Autore</th>
+                    <th>Genere</th>
+                    <th>Anno</th>
+                    <th>Azioni</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:each="libro : ${libri}">
+                    <td>
+                        <img th:if="${libro.copertinaUrl != null and !libro.copertinaUrl.isEmpty()}"
+                             th:src="${libro.copertinaUrl}" alt="Copertina" class="book-cover-small" />
+                        <div th:unless="${libro.copertinaUrl != null and !libro.copertinaUrl.isEmpty()}"
+                             class="book-cover-small book-cover-placeholder">📖</div>
+                    </td>
+                    <td th:text="${libro.titolo}">Titolo Libro</td>
+                    <td>
+                        <a th:if="${libro.autore != null}" th:href="@{/autore/{id}(id=${libro.autore.id})}" class="action-link-view"
+                           th:text="${libro.autore.nome} + ' ' + ${libro.autore.cognome}">Autore</a>
+                    </td>
+                    <td>
+                        <a th:if="${libro.genere != null}" th:href="@{/genere/{id}(id=${libro.genere.id})}" class="badge-genere"
+                           th:text="${libro.genere.nome}">Genere</a>
+                    </td>
+                    <td th:text="${libro.annoPubblicazione}">2020</td>
+                    <td>
+                        <div class="action-buttons-cell">
+                            <a th:href="@{/libro/{id}(id=${libro.id})}" class="action-link-view">Visualizza</a>
+
+                            <a sec:authorize="hasAuthority('ADMIN')"
+                               th:href="@{/admin/libro/{id}/edit(id=${libro.id})}"
+                               class="action-link-edit">Modifica</a>
+
+                            <form sec:authorize="hasAuthority('ADMIN')"
+                                  th:action="@{/admin/libro/{id}/delete(id=${libro.id})}" method="post"
+                                  onsubmit="return confirm('Sei sicuro di voler eliminare questo libro dal catalogo?');">
+                                <button type="submit" class="btn-reset action-link-delete">Elimina</button>
+                            </form>
+                        </div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+
+        <div class="margin-top-lg">
+            <a th:href="@{/}" class="back-link">← Torna alla Home</a>
+        </div>
+    </main>
+
+</body>
+</html>

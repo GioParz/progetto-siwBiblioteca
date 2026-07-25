@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Pannello Admin - BibliotecAmica</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+
+    <div class="top-bar admin-bar">
+        <div class="top-bar-right">
+            <span class="welcome-user"><strong class="panel-admin-text">PANNELLO ADMIN</strong></span>
+        </div>
+    </div>
+
+    <a th:href="@{/}" class="logo-wrapper">
+        <span class="brand-title">📚 Biblio<span>Hub</span></span>
+    </a>
+
+    <main class="main-content">
+
+        <div>
+            <div class="title-box box-admin">Pannello di Amministrazione</div>
+        </div>
+
+        <p class="welcome-text">
+            Da qui puoi gestire il catalogo di BiblioHub: aggiungere nuovi libri, autori e generi,
+            oppure modificare ed eliminare quelli già presenti.
+        </p>
+
+        <h2 class="section-title">Gestione Catalogo</h2>
+        <div class="buttons-container margin-bottom-lg">
+            <a th:href="@{/admin/libro/new}" class="main-link admin-btn">+ Nuovo Libro</a>
+            <a th:href="@{/admin/autore/new}" class="main-link admin-btn">+ Nuovo Autore</a>
+            <a th:href="@{/admin/genere/new}" class="main-link admin-btn">+ Nuovo Genere</a>
+        </div>
+
+        <h2 class="section-title">Visualizza ed Elimina</h2>
+        <div class="buttons-container">
+            <a th:href="@{/libri}" class="main-link">Vai al Catalogo Libri</a>
+            <a th:href="@{/autori}" class="main-link">Vai all'Elenco Autori</a>
+            <a th:href="@{/generi}" class="main-link">Vai all'Elenco Generi</a>
+        </div>
+
+        <div class="margin-top-xl">
+            <a th:href="@{/}" class="back-link">← Torna alla Home</a>
+        </div>
+    </main>
+
+</body>
+</html>

@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Accedi - BibliotecAmica</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+
+    <a th:href="@{/}" class="logo-wrapper">
+        <span class="brand-title">📚 Biblio<span>Hub</span></span>
+    </a>
+
+    <main class="main-content">
+
+        <div>
+            <div class="title-box">Accedi</div>
+        </div>
+
+        <!-- Messaggio di credenziali errate (impostato da Spring Security tramite failureUrl) -->
+        <div th:if="${param.error}" class="alert alert-danger">
+            Username o password non validi. Riprova.
+        </div>
+
+        <!-- Messaggio di registrazione avvenuta con successo -->
+        <div th:if="${param.registered}" class="alert alert-success">
+            Registrazione completata! Ora puoi effettuare l'accesso.
+        </div>
+
+        <form th:action="@{/login}" method="post" class="library-form">
+
+            <div class="form-group">
+                <label for="username">Username</label>
+                <input type="text" id="username" name="username" placeholder="Il tuo username" autofocus />
+            </div>
+
+            <div class="form-group">
+                <label for="password">Password</label>
+                <input type="password" id="password" name="password" placeholder="La tua password" />
+            </div>
+
+            <div class="margin-top-lg">
+                <button type="submit" class="main-link">Accedi</button>
+            </div>
+        </form>
+
+        <p class="no-data-msg margin-top-lg">
+            Non hai ancora un account? <a th:href="@{/register}">Registrati qui</a>
+        </p>
+
+        <div class="margin-top-sm">
+            <a th:href="@{/}" class="back-link">← Torna alla Home</a>
+        </div>
+    </main>
+
+</body>
+</html>

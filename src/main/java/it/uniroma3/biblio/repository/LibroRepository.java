@@ -2,6 +2,8 @@ package it.uniroma3.biblio.repository;
 
 import java.util.List;
 import java.util.Optional;
+
+import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.query.Param;
@@ -34,4 +36,19 @@ public interface LibroRepository extends CrudRepository<Libro, Long> {
     @Query("SELECT DISTINCT l FROM Libro l WHERE l.genere IN :generi " +
            "AND l NOT IN (SELECT el.libro FROM ElementoLibreria el WHERE el.utente = :utente)")
     public List<Libro> findSuggeritiPerGeneriEUtente(@Param("generi") List<Genere> generi, @Param("utente") Utente utente);
+    
+    // Query con JOIN FETCH per evitare il problema N+1
+    @Query("SELECT DISTINCT l FROM Libro l LEFT JOIN FETCH l.autore LEFT JOIN FETCH l.genere")
+    List<Libro> findAllWithAutoreAndGenere();
+
+    // In alternativa, carica in modo efficiente le relazioni EAGER per un singolo id
+    @EntityGraph(attributePaths = {"autore", "genere"})
+    Optional<Libro> findById(Long id);
+
+    List<Libro> findByTitoloContainingIgnoreCase(String titolo);
+
+    // Cerca libri del genere preferito che NON sono ancora nella libreria dell'utente
+    @Query("SELECT l FROM Libro l WHERE l.genere.id = :genereId AND l.id NOT IN " +
+           "(SELECT e.libro.id FROM ElementoLibreria e WHERE e.utente.id = :utenteId)")
+    List<Libro> findConsigliatiByGenere(@Param("genereId") Long genereId, @Param("utenteId") Long utenteId);
 }

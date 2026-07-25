@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title th:text="${libro.id != null} ? 'Modifica Libro' : 'Nuovo Libro'">Gestione Libro</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+
+    <div class="top-bar admin-bar">
+        <div class="top-bar-right">
+            <span class="welcome-user"><strong class="panel-admin-text">PANNELLO ADMIN</strong></span>
+        </div>
+    </div>
+
+    <a th:href="@{/}" class="logo-wrapper">
+        <span class="brand-title">📚 Biblio<span>Hub</span></span>
+    </a>
+
+    <main class="main-content">
+
+        <div>
+            <div class="title-box"
+                 th:text="${libro.id != null} ? 'Modifica Libro' : 'Nuovo Libro nel Catalogo'"
+                 th:classappend="${libro.id != null} ? 'box-admin' : ''">
+                 Gestione Libro
+            </div>
+        </div>
+
+        <form th:action="${libro.id != null} ? @{/admin/libro/{id}/edit(id=${libro.id})} : @{/admin/libri}"
+              th:object="${libro}" method="post" class="library-form">
+
+            <div th:if="${#fields.hasGlobalErrors()}" class="error-msg">
+                <ul class="no-margin">
+                    <li th:each="err : ${#fields.globalErrors()}" th:text="${err}">Errore di validazione globale</li>
+                </ul>
+            </div>
+
+            <div class="form-group">
+                <label>Titolo</label>
+                <input type="text" th:field="*{titolo}" placeholder="Es: Delitto e Castigo" />
+                <span th:if="${#fields.hasErrors('titolo')}" th:errors="*{titolo}" class="field-error"></span>
+            </div>
+
+            <div class="form-group">
+                <label>ISBN</label>
+                <input type="text" th:field="*{isbn}" placeholder="Es: 9788807900012" />
+                <span th:if="${#fields.hasErrors('isbn')}" th:errors="*{isbn}" class="field-error"></span>
+            </div>
+
+            <div class="form-group">
+                <label>Anno di Pubblicazione</label>
+                <input type="number" th:field="*{annoPubblicazione}" placeholder="Es: 1866" />
+                <span th:if="${#fields.hasErrors('annoPubblicazione')}" th:errors="*{annoPubblicazione}" class="field-error"></span>
+            </div>
+
+            <div class="form-group">
+                <label>Autore</label>
+                <select th:field="*{autore}">
+                    <option value="">-- Seleziona un Autore --</option>
+                    <option th:each="a : ${autori}" th:value="${a.id}" th:text="${a.nome} + ' ' + ${a.cognome}">Autore</option>
+                </select>
+                <span th:if="${#fields.hasErrors('autore')}" th:errors="*{autore}" class="field-error"></span>
+            </div>
+
+            <div class="form-group">
+                <label>Genere</label>
+                <select th:field="*{genere}">
+                    <option value="">-- Seleziona un Genere --</option>
+                    <option th:each="g : ${generi}" th:value="${g.id}" th:text="${g.nome}">Genere</option>
+                </select>
+                <span th:if="${#fields.hasErrors('genere')}" th:errors="*{genere}" class="field-error"></span>
+            </div>
+
+            <div class="form-group">
+                <label>Trama</label>
+                <textarea th:field="*{trama}" rows="5" placeholder="Breve descrizione della trama..."></textarea>
+                <span th:if="${#fields.hasErrors('trama')}" th:errors="*{trama}" class="field-error"></span>
+            </div>
+
+            <div class="form-group">
+                <label>URL Copertina (opzionale)</label>
+                <input type="text" th:field="*{copertinaUrl}" placeholder="https://..." />
+                <span th:if="${#fields.hasErrors('copertinaUrl')}" th:errors="*{copertinaUrl}" class="field-error"></span>
+            </div>
+
+            <div class="margin-top-lg">
+                <button type="submit" class="main-link"
+                        th:text="${libro.id != null} ? 'Salva Modifiche' : 'Aggiungi al Catalogo'"
+                        th:classappend="${libro.id != null} ? 'btn-admin' : ''">
+                        Invia
+                </button>
+            </div>
+        </form>
+
+        <div class="margin-top-lg">
+            <a href="javascript:history.back()" class="back-link">Annulla e torna indietro</a>
+        </div>
+    </main>
+
+</body>
+</html>

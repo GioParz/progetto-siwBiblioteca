@@ -13,18 +13,20 @@ import it.uniroma3.biblio.model.Utente;
 
 public interface ElementoLibreriaRepository extends CrudRepository<ElementoLibreria, Long> {
 
-    public List<ElementoLibreria> findByUtente(Utente utente);
+    List<ElementoLibreria> findByUtente(Utente utente);
 
-    public Optional<ElementoLibreria> findByUtenteAndLibro(Utente utente, Libro libro);
+    Optional<ElementoLibreria> findByUtenteAndLibro(Utente utente, Libro libro);
 
-    public boolean existsByUtenteAndLibro(Utente utente, Libro libro);
+    boolean existsByUtenteAndLibro(Utente utente, Libro libro);
+    
+    boolean existsByLibroId(Long libroId);
 
     // Estrae i generi preferiti dall'utente (libri con voto >= 4 o salvati in libreria)
     @Query("SELECT DISTINCT el.libro.genere FROM ElementoLibreria el " +
-           "WHERE el.utente = :utente AND (el.valutazione >= 4 OR el.valutazione IS NULL)")
-    public List<Genere> findGeneriPreferitiDaUtente(@Param("utente") Utente utente);
+           "WHERE el.utente = :utente AND el.valutazione >= 4")
+    List<Genere> findGeneriPreferitiDaUtente(@Param("utente") Utente utente);
 
     // Calcola la media voti complessiva di un libro (utilizzata nella scheda dettaglio libro)
     @Query("SELECT AVG(el.valutazione) FROM ElementoLibreria el WHERE el.libro = :libro AND el.valutazione IS NOT NULL")
-    public Double findMediaValutazionePerLibro(@Param("libro") Libro libro);
+    Double findMediaValutazionePerLibro(@Param("libro") Libro libro);
 }
