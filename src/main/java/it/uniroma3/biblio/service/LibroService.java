@@ -3,7 +3,6 @@ package it.uniroma3.biblio.service;
 import java.util.List;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
-import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import it.uniroma3.biblio.exception.LibroInUsoException;
@@ -30,7 +29,7 @@ public class LibroService {
 	}
 
     public List<Libro> findAll() {
-        return (List<Libro>) this.libroRepository.findAll();
+        return this.libroRepository.findAllWithAutoreAndGenere();
     }
 
     public Libro findById(Long id) {
@@ -54,11 +53,9 @@ public class LibroService {
         this.libroRepository.deleteById(id);
     }
 
-    // SUPPORTS: Se c'è una transazione attiva usa quella, altrimenti esegue in modalità non-transazionale
-    @Transactional(propagation = Propagation.SUPPORTS)
     public List<Libro> cercaLibri(String query, Long genereId) {
         if ((query == null || query.isBlank()) && genereId == null) {
-            return this.findAll();
+            return this.findAll(); // ora già ottimizzato, vedi sopra
         }
 
         Genere genere = null;
@@ -69,5 +66,10 @@ public class LibroService {
         String queryPulita = (query != null && !query.isBlank()) ? query.trim() : null;
 
         return this.libroRepository.findByGenereEQuery(genere, queryPulita);
+    }
+
+    /** Usato dalla ricerca globale */
+    public List<Libro> cercaGlobale(String query) {
+        return this.libroRepository.findByTitoloOAutoreOGenereContaining(query);
     }
 }

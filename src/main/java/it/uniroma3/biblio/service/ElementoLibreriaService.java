@@ -32,8 +32,12 @@ public class ElementoLibreriaService {
 		this.utenteRepository = utenteRepository;
 	}
 
+    /**
+     * PRIMA: findByUtente() "nudo", N+1 a due livelli (libro + autore del libro) per ogni
+     * elemento della libreria. ORA usa la query con JOIN FETCH su libro e libro.autore.
+     */
     public List<ElementoLibreria> findByUtente(Utente utente) {
-        return this.elementoLibreriaRepository.findByUtente(utente);
+        return this.elementoLibreriaRepository.findByUtenteWithLibroEAutore(utente);
     }
 
     public ElementoLibreria findById(Long id) {

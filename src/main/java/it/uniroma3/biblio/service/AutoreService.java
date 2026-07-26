@@ -25,7 +25,21 @@ public class AutoreService {
 
     public Autore findById(Long id) {
         return this.autoreRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Autore non trovato con id: " + id));
+                .orElseThrow(() -> new ResourceNotFoundException("Autore con id: " + id + " non trovato."));
+    }
+
+    /**
+     * Usato dalla pagina di dettaglio (/autore/{id}), che mostra anche l'elenco delle opere
+     * dell'autore con il rispettivo genere: carica tutto con un'unica query.
+     */
+    public Autore findByIdConLibri(Long id) {
+        return this.autoreRepository.findByIdWithLibriEGeneri(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Autore con id: " + id + " non trovato."));
+    }
+
+    /** Usato dalla ricerca globale */
+    public List<Autore> cerca(String query) {
+        return this.autoreRepository.findByNomeContainingIgnoreCaseOrCognomeContainingIgnoreCase(query, query);
     }
 
     @Transactional(isolation = Isolation.READ_COMMITTED)
