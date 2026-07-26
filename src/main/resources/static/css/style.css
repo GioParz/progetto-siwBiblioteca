@@ -183,21 +183,16 @@ body {
    3. LOGO / TESTATA
    ========================================================================== */
 .logo-wrapper {
-    width: 100%;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    margin: 35px auto;
-    text-decoration: none;
+	width: 100%;
+	display: block;
+    line-height: 0;
+    margin-bottom: 35px;
 }
 
 .logo-img {
+	width: 100%;
+    height: auto;
     display: block;
-    height: 90px;
-    width: auto;
-    max-width: 90%;
-    border-radius: 6px;
-    transition: opacity 0.2s ease;
 }
 
 .logo-wrapper:hover .logo-img {
@@ -690,7 +685,19 @@ body {
 }
 
 .no-data-msg a {
-    font-weight: bold;
+	font-weight: 700;
+    color: #c9a227;
+    text-decoration: none;
+    transition: color 0.2s ease, text-decoration 0.2s ease;
+}
+
+.no-data-msg a:hover {
+    color: #f0e6d2; /* Diventa crema al passaggio del mouse */
+    text-decoration: underline; /* Compare la sottolineatura solo al mouseover */
+}
+
+.no-data-msg a:visited {
+    color: #c9a227; /* Evita che diventi viola dopo aver visitato la pagina */
 }
 
 .no-margin {

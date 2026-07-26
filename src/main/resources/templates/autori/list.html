@@ -1,72 +1,58 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org"
-      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
 <head>
-    <title>Elenco Autori - BibliotecAmica</title>
-    <link rel="stylesheet" th:href="@{/css/style.css}">
+	<title>Elenco Autori - BibliotecAmica</title>
+	<link rel="stylesheet" th:href="@{/css/style.css}">
 </head>
+
 <body>
 
-    <div class="top-bar">
-        <div class="top-bar-right">
-            <span sec:authorize="isAnonymous()">
-                <a th:href="@{/login}" class="login-link">Accedi</a>
-            </span>
-            <span sec:authorize="isAuthenticated()" class="user-menu">
-                <span class="welcome-user">Ciao, <strong sec:authentication="name">Utente</strong>!</span>
-                <form th:action="@{/logout}" method="post">
-                    <button type="submit" class="logout-btn">Logout</button>
-                </form>
-            </span>
-        </div>
-    </div>
+	<div th:replace="~{fragments/header :: header('pubblico')}"></div>
 
-    <a th:href="@{/}" class="logo-wrapper">
-        <span class="brand-title">📚 Biblio<span>Hub</span></span>
-    </a>
+	<main class="main-content">
 
-    <main class="main-content">
+		<div>
+			<div class="title-box">Autori in Catalogo</div>
+		</div>
 
-        <div>
-            <div class="title-box">Autori in Catalogo</div>
-        </div>
+		<!-- Solo l'ADMIN può registrare un nuovo autore -->
+		<div sec:authorize="hasAuthority('ADMIN')" class="margin-bottom-lg">
+			<a th:href="@{/admin/autore/new}" class="main-link admin-btn">+ Aggiungi Nuovo Autore</a>
+		</div>
 
-        <!-- Solo l'ADMIN può registrare un nuovo autore -->
-        <div sec:authorize="hasAuthority('ADMIN')" class="margin-bottom-lg">
-            <a th:href="@{/admin/autore/new}" class="main-link admin-btn">+ Aggiungi Nuovo Autore</a>
-        </div>
+		<div th:if="${#lists.isEmpty(autori)}" class="no-data-msg">
+			Non ci sono autori registrati nel sistema.
+		</div>
 
-        <div th:if="${#lists.isEmpty(autori)}" class="no-data-msg">
-            Non ci sono autori registrati nel sistema.
-        </div>
+		<table class="library-table table-centered" th:unless="${#lists.isEmpty(autori)}">
+			<thead>
+				<tr>
+					<th>Cognome</th>
+					<th>Nome</th>
+					<th>Nazionalità</th>
+					<th>Azioni</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr th:each="autore : ${autori}">
+					<td th:text="${autore.cognome}">Cognome</td>
+					<td th:text="${autore.nome}">Nome</td>
+					<td th:text="${autore.nazionalita}">Nazionalità</td>
+					<td>
+						<div class="action-buttons-cell">
+							<a th:href="@{/autore/{id}(id=${autore.id})}" class="action-link-view">Visualizza</a>
+						</div>
+					</td>
+				</tr>
+			</tbody>
+		</table>
 
-        <table class="library-table table-centered" th:unless="${#lists.isEmpty(autori)}">
-            <thead>
-                <tr>
-                    <th>Cognome</th>
-                    <th>Nome</th>
-                    <th>Nazionalità</th>
-                    <th>Azioni</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr th:each="autore : ${autori}">
-                    <td th:text="${autore.cognome}">Cognome</td>
-                    <td th:text="${autore.nome}">Nome</td>
-                    <td th:text="${autore.nazionalita}">Nazionalità</td>
-                    <td>
-                        <div class="action-buttons-cell">
-                            <a th:href="@{/autore/{id}(id=${autore.id})}" class="action-link-view">Visualizza</a>
-                        </div>
-                    </td>
-                </tr>
-            </tbody>
-        </table>
-
-        <div class="margin-top-lg">
-            <a th:href="@{/}" class="back-link">← Torna alla Home</a>
-        </div>
-    </main>
+		<div class="margin-top-lg">
+			<a th:href="@{/}" class="back-link">← Torna alla Home</a>
+		</div>
+	</main>
 
 </body>
+
 </html>

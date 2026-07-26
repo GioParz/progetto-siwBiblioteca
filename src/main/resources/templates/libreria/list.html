@@ -1,107 +1,127 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org"
-      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
 <head>
-    <title>La Mia Libreria - BibliotecAmica</title>
-    <link rel="stylesheet" th:href="@{/css/style.css}">
+	<title>La Mia Libreria - BibliotecAmica</title>
+	<link rel="stylesheet" th:href="@{/css/style.css}">
 </head>
+
 <body>
 
-    <div class="top-bar">
-        <div class="top-bar-right">
-            <span class="user-menu">
-                <span class="welcome-user">Ciao, <strong sec:authentication="name">Utente</strong>!</span>
-                <form th:action="@{/logout}" method="post">
-                    <button type="submit" class="logout-btn">Logout</button>
-                </form>
-            </span>
-        </div>
-    </div>
+	<div th:replace="~{fragments/header :: header('pubblico')}"></div>
 
-    <a th:href="@{/}" class="logo-wrapper">
-        <span class="brand-title">📚 Biblio<span>Hub</span></span>
-    </a>
+	<main class="main-content">
 
-    <main class="main-content">
+		<!-- Messaggi di conferma/errore dopo un redirect -->
+		<div th:if="${successMessage}" class="alert alert-success" th:text="${successMessage}">Operazione riuscita</div>
+		<div th:if="${errorMessage}" class="alert alert-danger" th:text="${errorMessage}">Si è verificato un errore
+		</div>
 
-        <!-- Messaggi di conferma/errore dopo un redirect -->
-        <div th:if="${successMessage}" class="alert alert-success" th:text="${successMessage}">Operazione riuscita</div>
-        <div th:if="${errorMessage}" class="alert alert-danger" th:text="${errorMessage}">Si è verificato un errore</div>
+		<div>
+			<div class="title-box">La Mia Libreria Personale</div>
+		</div>
 
-        <div>
-            <div class="title-box">La Mia Libreria Personale</div>
-        </div>
+		<div class="margin-bottom-lg">
+			<a th:href="@{/libri}" class="main-link">Sfoglia il Catalogo</a>
+		</div>
 
-        <div class="margin-bottom-lg">
-            <a th:href="@{/libri}" class="main-link">Sfoglia il Catalogo</a>
-        </div>
+		<!-- Motore dei consigli: funzionalità riservata, anteprima compatta qui nella
+             libreria personale (la lista completa è su /consigli). Non compare nulla se
+             l'utente non ha ancora valutato positivamente nessun libro. -->
+		<div th:if="${!#lists.isEmpty(anteprimaConsigli)}" class="margin-bottom-lg">
+			<h2 class="section-title">Consigliati per Te</h2>
+			<div th:each="libro : ${anteprimaConsigli}" class="library-item-card">
+				<img th:if="${libro.copertinaUrl != null and !libro.copertinaUrl.isEmpty()}"
+					th:src="${libro.copertinaUrl}" alt="Copertina" class="book-cover-small" />
+				<div th:unless="${libro.copertinaUrl != null and !libro.copertinaUrl.isEmpty()}"
+					class="book-cover-small book-cover-placeholder">📖</div>
+				<div class="library-item-details">
+					<a th:href="@{/libro/{id}(id=${libro.id})}" class="library-item-title"
+						th:text="${libro.titolo}">Titolo Libro</a>
+					<div class="library-item-meta">
+						<span th:if="${libro.autore != null}"
+							th:text="${libro.autore.nome} + ' ' + ${libro.autore.cognome}">Autore</span>
+						&middot;
+						<span th:if="${libro.genere != null}" class="badge-genere"
+							th:text="${libro.genere.nome}">Genere</span>
+					</div>
+				</div>
+			</div>
+			<div class="margin-top-sm">
+				<a th:href="@{/consigli}" class="back-link">Vedi tutti i tuoi consigli di lettura →</a>
+			</div>
+		</div>
 
-        <div th:if="${#lists.isEmpty(libreria)}" class="no-data-msg">
-            La tua libreria è ancora vuota. <a th:href="@{/libri}">Vai al catalogo</a> per aggiungere il tuo primo libro!
-        </div>
+		<div th:if="${#lists.isEmpty(libreria)}" class="no-data-msg">
+			La tua libreria è ancora vuota. <a th:href="@{/libri}">Vai al catalogo</a> per aggiungere il tuo primo
+			libro!
+		</div>
 
-        <!-- Un blocco per ogni "elemento libreria": rappresenta la scheda di lettura di un singolo libro -->
-        <div th:each="elemento : ${libreria}" class="library-item-card">
+		<!-- Un blocco per ogni "elemento libreria": rappresenta la scheda di lettura di un singolo libro -->
+		<div th:each="elemento : ${libreria}" class="library-item-card">
 
-            <img th:if="${elemento.libro.copertinaUrl != null and !elemento.libro.copertinaUrl.isEmpty()}"
-                 th:src="${elemento.libro.copertinaUrl}" alt="Copertina" class="book-cover-small" />
-            <div th:unless="${elemento.libro.copertinaUrl != null and !elemento.libro.copertinaUrl.isEmpty()}"
-                 class="book-cover-small book-cover-placeholder">📖</div>
+			<img th:if="${elemento.libro.copertinaUrl != null and !elemento.libro.copertinaUrl.isEmpty()}"
+				th:src="${elemento.libro.copertinaUrl}" alt="Copertina" class="book-cover-small" />
+			<div th:unless="${elemento.libro.copertinaUrl != null and !elemento.libro.copertinaUrl.isEmpty()}"
+				class="book-cover-small book-cover-placeholder">📖</div>
 
-            <div class="library-item-details">
-                <a th:href="@{/libro/{id}(id=${elemento.libro.id})}" class="library-item-title" th:text="${elemento.libro.titolo}">Titolo Libro</a>
+			<div class="library-item-details">
+				<a th:href="@{/libro/{id}(id=${elemento.libro.id})}" class="library-item-title"
+					th:text="${elemento.libro.titolo}">Titolo Libro</a>
 
-                <div class="library-item-meta">
-                    <span th:text="${elemento.libro.autore.nome} + ' ' + ${elemento.libro.autore.cognome}">Autore</span>
-                    &middot;
-                    <span th:if="${elemento.statoLettura.name() == 'DA_LEGGERE'}" class="badge-stato badge-da-leggere" th:text="${elemento.statoLettura.etichetta}">Da Leggere</span>
-                    <span th:if="${elemento.statoLettura.name() == 'IN_LETTURA'}" class="badge-stato badge-in-lettura" th:text="${elemento.statoLettura.etichetta}">In Lettura</span>
-                    <span th:if="${elemento.statoLettura.name() == 'COMPLETATO'}" class="badge-stato badge-completato" th:text="${elemento.statoLettura.etichetta}">Completato</span>
-                    &middot;
-                    Aggiunto il <span th:text="${#temporals.format(elemento.dataAggiunta, 'dd/MM/yyyy')}">01/01/2026</span>
-                </div>
+				<div class="library-item-meta">
+					<span th:text="${elemento.libro.autore.nome} + ' ' + ${elemento.libro.autore.cognome}">Autore</span>
+					&middot;
+					<span th:if="${elemento.statoLettura.name() == 'DA_LEGGERE'}" class="badge-stato badge-da-leggere"
+						th:text="${elemento.statoLettura.etichetta}">Da Leggere</span>
+					<span th:if="${elemento.statoLettura.name() == 'IN_LETTURA'}" class="badge-stato badge-in-lettura"
+						th:text="${elemento.statoLettura.etichetta}">In Lettura</span>
+					<span th:if="${elemento.statoLettura.name() == 'COMPLETATO'}" class="badge-stato badge-completato"
+						th:text="${elemento.statoLettura.etichetta}">Completato</span>
+					&middot;
+					Aggiunto il <span
+						th:text="${#temporals.format(elemento.dataAggiunta, 'dd/MM/yyyy')}">01/01/2026</span>
+				</div>
 
-                <div class="star-rating margin-bottom-sm">
-                    <span th:each="i : ${#numbers.sequence(1,5)}"
-                          th:class="${elemento.valutazione != null and i <= elemento.valutazione} ? 'star-filled' : 'star-empty'">★</span>
-                </div>
+				<div class="star-rating margin-bottom-sm">
+					<span th:each="i : ${#numbers.sequence(1,5)}"
+						th:class="${elemento.valutazione != null and i <= elemento.valutazione} ? 'star-filled' : 'star-empty'">★</span>
+				</div>
 
-                <!-- Form di aggiornamento stato lettura e valutazione (CU-3) -->
-                <form th:action="@{/libreria/{id}/aggiorna(id=${elemento.id})}" method="post" class="library-item-form">
-                    <div class="form-group">
-                        <label>Stato di Lettura</label>
-                        <select name="statoLettura">
-                            <option th:each="stato : ${statiLettura}"
-                                    th:value="${stato}"
-                                    th:text="${stato.etichetta}"
-                                    th:selected="${stato == elemento.statoLettura}">Stato</option>
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label>Valutazione</label>
-                        <select name="valutazione">
-                            <option value="">Nessuna valutazione</option>
-                            <option th:each="n : ${#numbers.sequence(1,5)}"
-                                    th:value="${n}"
-                                    th:text="${n} + ' Stelle'"
-                                    th:selected="${elemento.valutazione != null and elemento.valutazione == n}">Stelle</option>
-                        </select>
-                    </div>
-                    <button type="submit" class="main-link padding-btn-sm">Aggiorna Scheda</button>
-                </form>
+				<!-- Form di aggiornamento stato lettura e valutazione (CU-3) -->
+				<form th:action="@{/libreria/{id}/aggiorna(id=${elemento.id})}" method="post" class="library-item-form">
+					<div class="form-group">
+						<label>Stato di Lettura</label>
+						<select name="statoLettura">
+							<option th:each="stato : ${statiLettura}" th:value="${stato}" th:text="${stato.etichetta}"
+								th:selected="${stato == elemento.statoLettura}">Stato</option>
+						</select>
+					</div>
+					<div class="form-group">
+						<label>Valutazione</label>
+						<select name="valutazione">
+							<option value="">Nessuna valutazione</option>
+							<option th:each="n : ${#numbers.sequence(1,5)}" th:value="${n}" th:text="${n} + ' Stelle'"
+								th:selected="${elemento.valutazione != null and elemento.valutazione == n}">Stelle
+							</option>
+						</select>
+					</div>
+					<button type="submit" class="main-link padding-btn-sm">Aggiorna Scheda</button>
+				</form>
 
-                <!-- Form di rimozione dalla libreria (CU-4) -->
-                <form th:action="@{/libreria/{id}/rimuovi(id=${elemento.id})}" method="post" class="margin-top-sm"
-                      onsubmit="return confirm('Sei sicuro di voler rimuovere questo libro dalla tua libreria?');">
-                    <button type="submit" class="btn-reset action-link-delete">Rimuovi dalla Libreria</button>
-                </form>
-            </div>
-        </div>
+				<!-- Form di rimozione dalla libreria (CU-4) -->
+				<form th:action="@{/libreria/{id}/rimuovi(id=${elemento.id})}" method="post" class="margin-top-sm"
+					onsubmit="return confirm('Sei sicuro di voler rimuovere questo libro dalla tua libreria?');">
+					<button type="submit" class="btn-reset action-link-delete">Rimuovi dalla Libreria</button>
+				</form>
+			</div>
+		</div>
 
-        <div class="margin-top-lg">
-            <a th:href="@{/}" class="back-link">← Torna alla Home</a>
-        </div>
-    </main>
+		<div class="margin-top-lg">
+			<a th:href="@{/}" class="back-link">← Torna alla Home</a>
+		</div>
+	</main>
 
 </body>
+
 </html>

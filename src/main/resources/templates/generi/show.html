@@ -1,75 +1,62 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org"
-      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
 <head>
-    <title th:text="${genere.nome} + ' - BiblioHub'">Dettaglio Genere</title>
-    <link rel="stylesheet" th:href="@{/css/style.css}">
+	<title th:text="${genere.nome} + ' - BibliotecAmica'">Dettaglio Genere</title>
+	<link rel="stylesheet" th:href="@{/css/style.css}">
 </head>
+
 <body>
 
-    <div class="top-bar">
-        <div class="top-bar-right">
-            <span sec:authorize="isAnonymous()">
-                <a th:href="@{/login}" class="login-link">Accedi</a>
-            </span>
-            <span sec:authorize="isAuthenticated()" class="user-menu">
-                <span class="welcome-user">Ciao, <strong sec:authentication="name">Utente</strong>!</span>
-                <form th:action="@{/logout}" method="post">
-                    <button type="submit" class="logout-btn">Logout</button>
-                </form>
-            </span>
-        </div>
-    </div>
+	<div th:replace="~{fragments/header :: header('pubblico')}"></div>
 
-    <a th:href="@{/}" class="logo-wrapper">
-        <span class="brand-title">📚 Biblio<span>Hub</span></span>
-    </a>
+	<main class="main-content">
 
-    <main class="main-content">
+		<div>
+			<div class="title-box" th:text="${genere.nome}">Nome Genere</div>
+		</div>
 
-        <div>
-            <div class="title-box" th:text="${genere.nome}">Nome Genere</div>
-        </div>
+		<div class="info-box" th:if="${genere.descrizione != null and !genere.descrizione.isEmpty()}">
+			<p th:text="${genere.descrizione}">Descrizione del genere...</p>
+		</div>
 
-        <div class="info-box" th:if="${genere.descrizione != null and !genere.descrizione.isEmpty()}">
-            <p th:text="${genere.descrizione}">Descrizione del genere...</p>
-        </div>
+		<!-- Sezione libri del genere -->
+		<h2 class="section-title">Libri del genere <span th:text="${genere.nome}">Genere</span></h2>
 
-        <!-- Sezione libri del genere -->
-        <h2 class="section-title">Libri del genere <span th:text="${genere.nome}">Genere</span></h2>
+		<p th:if="${libri.isEmpty()}" class="no-data-msg">Nessun libro di questo genere presente nel catalogo.</p>
 
-        <p th:if="${libri.isEmpty()}" class="no-data-msg">Nessun libro di questo genere presente nel catalogo.</p>
+		<table class="library-table table-centered" th:if="${!libri.isEmpty()}">
+			<thead>
+				<tr>
+					<th>Titolo</th>
+					<th>Autore</th>
+					<th>Anno</th>
+					<th>Azione</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr th:each="libro : ${libri}">
+					<td th:text="${libro.titolo}">Titolo</td>
+					<td>
+						<a th:if="${libro.autore != null}" th:href="@{/autore/{id}(id=${libro.autore.id})}"
+							class="action-link-view"
+							th:text="${libro.autore.nome} + ' ' + ${libro.autore.cognome}">Autore</a>
+					</td>
+					<td th:text="${libro.annoPubblicazione}">Anno</td>
+					<td>
+						<div class="action-buttons-cell">
+							<a th:href="@{/libro/{id}(id=${libro.id})}" class="action-link-view">Visualizza</a>
+						</div>
+					</td>
+				</tr>
+			</tbody>
+		</table>
 
-        <table class="library-table table-centered" th:if="${!libri.isEmpty()}">
-            <thead>
-                <tr>
-                    <th>Titolo</th>
-                    <th>Autore</th>
-                    <th>Anno</th>
-                    <th>Azione</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr th:each="libro : ${libri}">
-                    <td th:text="${libro.titolo}">Titolo</td>
-                    <td>
-                        <a th:if="${libro.autore != null}" th:href="@{/autore/{id}(id=${libro.autore.id})}" class="action-link-view"
-                           th:text="${libro.autore.nome} + ' ' + ${libro.autore.cognome}">Autore</a>
-                    </td>
-                    <td th:text="${libro.annoPubblicazione}">Anno</td>
-                    <td>
-                        <div class="action-buttons-cell">
-                            <a th:href="@{/libro/{id}(id=${libro.id})}" class="action-link-view">Visualizza</a>
-                        </div>
-                    </td>
-                </tr>
-            </tbody>
-        </table>
-
-        <div class="margin-top-lg">
-            <a th:href="@{/generi}" class="back-link">← Torna alla lista Generi</a>
-        </div>
-    </main>
+		<div class="margin-top-lg">
+			<a th:href="@{/generi}" class="back-link">← Torna alla lista Generi</a>
+		</div>
+	</main>
 
 </body>
+
 </html>

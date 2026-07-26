@@ -1,111 +1,100 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org"
-      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
 <head>
-    <title th:text="${libro.titolo} + ' - BiblioHub'">Dettaglio Libro</title>
-    <link rel="stylesheet" th:href="@{/css/style.css}">
+	<title th:text="${libro.titolo} + ' - BibliotecAmica'">Dettaglio Libro</title>
+	<link rel="stylesheet" th:href="@{/css/style.css}">
 </head>
+
 <body>
 
-    <div class="top-bar">
-        <div class="top-bar-right">
-            <span sec:authorize="isAnonymous()">
-                <a th:href="@{/login}" class="login-link">Accedi</a>
-            </span>
-            <span sec:authorize="isAuthenticated()" class="user-menu">
-                <span class="welcome-user">Ciao, <strong sec:authentication="name">Utente</strong>!</span>
-                <form th:action="@{/logout}" method="post">
-                    <button type="submit" class="logout-btn">Logout</button>
-                </form>
-            </span>
-        </div>
-    </div>
+	<div th:replace="~{fragments/header :: header('pubblico')}"></div>
 
-    <a th:href="@{/}" class="logo-wrapper">
-        <span class="brand-title">📚 Biblio<span>Hub</span></span>
-    </a>
+	<main class="main-content">
 
-    <main class="main-content">
+		<!-- Messaggi di conferma/errore dopo un redirect -->
+		<div th:if="${successMessage}" class="alert alert-success" th:text="${successMessage}">Operazione riuscita</div>
+		<div th:if="${errorMessage}" class="alert alert-danger" th:text="${errorMessage}">Si è verificato un errore
+		</div>
 
-        <!-- Messaggi di conferma/errore dopo un redirect -->
-        <div th:if="${successMessage}" class="alert alert-success" th:text="${successMessage}">Operazione riuscita</div>
-        <div th:if="${errorMessage}" class="alert alert-danger" th:text="${errorMessage}">Si è verificato un errore</div>
+		<div>
+			<div class="title-box" th:text="${libro.titolo}">Titolo Libro</div>
+		</div>
 
-        <div>
-            <div class="title-box" th:text="${libro.titolo}">Titolo Libro</div>
-        </div>
+		<div class="book-cover-container">
+			<img th:if="${libro.copertinaUrl != null and !libro.copertinaUrl.isEmpty()}" th:src="${libro.copertinaUrl}"
+				alt="Copertina" class="book-cover" />
+			<div th:unless="${libro.copertinaUrl != null and !libro.copertinaUrl.isEmpty()}"
+				class="book-cover book-cover-placeholder">📖</div>
+		</div>
 
-        <div class="book-cover-container">
-            <img th:if="${libro.copertinaUrl != null and !libro.copertinaUrl.isEmpty()}"
-                 th:src="${libro.copertinaUrl}" alt="Copertina" class="book-cover" />
-            <div th:unless="${libro.copertinaUrl != null and !libro.copertinaUrl.isEmpty()}"
-                 class="book-cover book-cover-placeholder">📖</div>
-        </div>
+		<!-- Box informazioni -->
+		<div class="info-box">
+			<div sec:authorize="hasAuthority('ADMIN')" class="text-right margin-bottom-sm">
+				<a th:href="@{/admin/libro/{id}/edit(id=${libro.id})}" class="action-link-edit font-size-md">Modifica
+					Libro</a>
+			</div>
+			<p><strong>Autore:</strong>
+				<a th:if="${libro.autore != null}" th:href="@{/autore/{id}(id=${libro.autore.id})}"
+					th:text="${libro.autore.nome} + ' ' + ${libro.autore.cognome}">Autore</a>
+			</p>
+			<p><strong>Genere:</strong>
+				<a th:if="${libro.genere != null}" th:href="@{/genere/{id}(id=${libro.genere.id})}" class="badge-genere"
+					th:text="${libro.genere.nome}">Genere</a>
+			</p>
+			<p><strong>ISBN:</strong> <span th:text="${libro.isbn}">ISBN</span></p>
+			<p><strong>Anno di Pubblicazione:</strong> <span th:text="${libro.annoPubblicazione}">Anno</span></p>
+			<p>
+				<strong>Valutazione Media dei Lettori:</strong>
+				<span th:if="${mediaVoto != null}" class="star-rating">
+					<span th:each="i : ${#numbers.sequence(1,5)}"
+						th:class="${i <= T(java.lang.Math).round(mediaVoto)} ? 'star-filled' : 'star-empty'">★</span>
+					<span th:text="'(' + ${#numbers.formatDecimal(mediaVoto, 1, 1)} + ' / 5)'"></span>
+				</span>
+				<span th:unless="${mediaVoto != null}" class="no-data-msg">Nessuna valutazione disponibile</span>
+			</p>
+		</div>
 
-        <!-- Box informazioni -->
-        <div class="info-box">
-            <div sec:authorize="hasAuthority('ADMIN')" class="text-right margin-bottom-sm">
-                <a th:href="@{/admin/libro/{id}/edit(id=${libro.id})}" class="action-link-edit font-size-md">Modifica Libro</a>
-            </div>
-            <p><strong>Autore:</strong>
-                <a th:if="${libro.autore != null}" th:href="@{/autore/{id}(id=${libro.autore.id})}"
-                   th:text="${libro.autore.nome} + ' ' + ${libro.autore.cognome}">Autore</a>
-            </p>
-            <p><strong>Genere:</strong>
-                <a th:if="${libro.genere != null}" th:href="@{/genere/{id}(id=${libro.genere.id})}" class="badge-genere"
-                   th:text="${libro.genere.nome}">Genere</a>
-            </p>
-            <p><strong>ISBN:</strong> <span th:text="${libro.isbn}">ISBN</span></p>
-            <p><strong>Anno di Pubblicazione:</strong> <span th:text="${libro.annoPubblicazione}">Anno</span></p>
-            <p>
-                <strong>Valutazione Media dei Lettori:</strong>
-                <span th:if="${mediaVoto != null}" class="star-rating">
-                    <span th:each="i : ${#numbers.sequence(1,5)}"
-                          th:class="${i <= T(java.lang.Math).round(mediaVoto)} ? 'star-filled' : 'star-empty'">★</span>
-                    <span th:text="'(' + ${#numbers.formatDecimal(mediaVoto, 1, 1)} + ' / 5)'"></span>
-                </span>
-                <span th:unless="${mediaVoto != null}" class="no-data-msg">Nessuna valutazione disponibile</span>
-            </p>
-        </div>
+		<h2 class="section-title">Trama</h2>
+		<p th:if="${libro.trama != null and !libro.trama.isEmpty()}" class="welcome-text font-size-md"
+			th:text="${libro.trama}">
+			Trama del libro...
+		</p>
+		<p th:unless="${libro.trama != null and !libro.trama.isEmpty()}" class="no-data-msg">
+			Nessuna trama disponibile per questo libro.
+		</p>
 
-        <h2 class="section-title">Trama</h2>
-        <p th:if="${libro.trama != null and !libro.trama.isEmpty()}" class="welcome-text font-size-md" th:text="${libro.trama}">
-            Trama del libro...
-        </p>
-        <p th:unless="${libro.trama != null and !libro.trama.isEmpty()}" class="no-data-msg">
-            Nessuna trama disponibile per questo libro.
-        </p>
+		<!-- Azioni sulla libreria personale, riservate agli utenti registrati -->
+		<div sec:authorize="isAuthenticated()" class="admin-separation-zone">
+			<div th:if="${giaInLibreria}" class="info-box">
+				<p class="no-margin">✓ Questo libro è già presente nella tua libreria personale.</p>
+				<a th:href="@{/libreria}" class="action-link-view">Vai alla tua Libreria</a>
+			</div>
+			<form th:unless="${giaInLibreria}" th:action="@{/libreria/aggiungi/{id}(id=${libro.id})}" method="post">
+				<button type="submit" class="main-link">+ Aggiungi alla mia Libreria</button>
+			</form>
+		</div>
 
-        <!-- Azioni sulla libreria personale, riservate agli utenti registrati -->
-        <div sec:authorize="isAuthenticated()" class="admin-separation-zone">
-            <div th:if="${giaInLibreria}" class="info-box">
-                <p class="no-margin">✓ Questo libro è già presente nella tua libreria personale.</p>
-                <a th:href="@{/libreria}" class="action-link-view">Vai alla tua Libreria</a>
-            </div>
-            <form th:unless="${giaInLibreria}" th:action="@{/libreria/aggiungi/{id}(id=${libro.id})}" method="post">
-                <button type="submit" class="main-link">+ Aggiungi alla mia Libreria</button>
-            </form>
-        </div>
+		<!-- Messaggio per utenti anonimi -->
+		<div sec:authorize="isAnonymous()" class="info-box margin-top-lg">
+			<p class="no-data-msg margin-bottom-sm">Accedi per salvare questo libro nella tua libreria personale.</p>
+			<a th:href="@{/login}" class="main-link">Accedi o Registrati</a>
+		</div>
 
-        <!-- Messaggio per utenti anonimi -->
-        <div sec:authorize="isAnonymous()" class="info-box margin-top-lg">
-            <p class="no-data-msg margin-bottom-sm">Accedi per salvare questo libro nella tua libreria personale.</p>
-            <a th:href="@{/login}" class="main-link">Accedi o Registrati</a>
-        </div>
+		<!-- Eliminazione riservata all'ADMIN -->
+		<div sec:authorize="hasAuthority('ADMIN')" class="admin-separation-zone">
+			<p>Area amministrativa:</p>
+			<form th:action="@{/admin/libro/{id}/delete(id=${libro.id})}" method="post"
+				onsubmit="return confirm('Sei sicuro di voler eliminare questo libro dal catalogo?');">
+				<button type="submit" class="main-link admin-btn">Elimina Libro dal Catalogo</button>
+			</form>
+		</div>
 
-        <!-- Eliminazione riservata all'ADMIN -->
-        <div sec:authorize="hasAuthority('ADMIN')" class="admin-separation-zone">
-            <p>Area amministrativa:</p>
-            <form th:action="@{/admin/libro/{id}/delete(id=${libro.id})}" method="post"
-                  onsubmit="return confirm('Sei sicuro di voler eliminare questo libro dal catalogo?');">
-                <button type="submit" class="main-link admin-btn">Elimina Libro dal Catalogo</button>
-            </form>
-        </div>
-
-        <div class="margin-top-lg">
-            <a th:href="@{/libri}" class="back-link">← Torna al Catalogo</a>
-        </div>
-    </main>
+		<div class="margin-top-lg">
+			<a th:href="@{/libri}" class="back-link">← Torna al Catalogo</a>
+		</div>
+	</main>
 
 </body>
+
 </html>

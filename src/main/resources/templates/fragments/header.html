@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
+<body>
+
+	<!--/*
+    Fragment condiviso, usato in tutte le pagine al posto del vecchio blocco duplicato
+    "top-bar + logo-wrapper". Parametro "variante":
+      - 'pubblico' : barra con Accedi/Logout + logo + ricerca globale (pagine consultabili
+                     da anonimi e utenti registrati: home, catalogo, autori, generi, libreria...)
+      - 'admin'    : barra "PANNELLO ADMIN" + logo + ricerca globale (pagine sotto /admin)
+      - 'minimo'   : solo logo, senza barra superiore e senza ricerca (login, registrazione,
+                     pagine di errore 403/404/500)
+	*/-->
+	<th:block th:fragment="header(variante)">
+
+		<div th:if="${variante != 'minimo'}" th:class="${variante == 'admin'} ? 'top-bar admin-bar' : 'top-bar'">
+
+			<div class="top-bar-left">
+				<form th:action="@{/ricerca}" method="get" class="top-bar-search">
+					<input type="text" name="q" th:value="${param.q}" placeholder="Cerca libri, autori, generi..."
+						aria-label="Cerca nel sito" />
+					<button type="submit" class="top-bar-search-btn" aria-label="Cerca"> </button>
+				</form>
+			</div>
+
+			<div class="top-bar-right" th:if="${variante == 'pubblico'}">
+				<span sec:authorize="isAnonymous()">
+					<a th:href="@{/login}" class="login-link">Accedi</a>
+				</span>
+				<span sec:authorize="isAuthenticated()" class="user-menu">
+					<span class="welcome-user">Ciao, <strong sec:authentication="name">Utente</strong>!</span>
+					<form th:action="@{/logout}" method="post">
+						<button type="submit" class="logout-btn">Logout</button>
+					</form>
+				</span>
+			</div>
+
+			<div class="top-bar-right" th:if="${variante == 'admin'}">
+				<span class="welcome-user"><strong class="panel-admin-text">PANNELLO ADMIN</strong></span>
+			</div>
+		</div>
+
+		<a th:href="@{/}" class="logo-wrapper">
+			<img th:src="@{/images/logo.jpg}" alt="BibliotecAmica logo" class="logo-img" />
+		</a>
+
+	</th:block>
+
+</body>
+
+</html>

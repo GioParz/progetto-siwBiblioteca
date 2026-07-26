@@ -1,22 +1,23 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
+
 <head>
-    <title>Errore del Server - BibliotecAmica</title>
-    <link rel="stylesheet" th:href="@{/css/style.css}">
+	<title>Errore del Server - BibliotecAmica</title>
+	<link rel="stylesheet" th:href="@{/css/style.css}">
 </head>
+
 <body>
 
-    <a th:href="@{/}" class="logo-wrapper">
-        <span class="brand-title">📚 Biblio<span>Hub</span></span>
-    </a>
+	<div th:replace="~{fragments/header :: header('minimo')}"></div>
 
-    <div class="error-container">
-        <div class="error-icon">🕯️</div>
-        <div class="error-code">500</div>
-        <p class="error-subtitle">Qualcosa si è inceppato tra gli scaffali.</p>
-        <p class="error-detail">Si è verificato un errore imprevisto. Riprova più tardi.</p>
-        <a th:href="@{/}" class="main-link">Torna alla Home</a>
-    </div>
+	<div class="error-container">
+		<div class="error-icon">🔒</div>
+		<div class="error-code">500</div>
+		<p class="error-subtitle">Qualcosa si è inceppato tra gli scaffali.</p>
+		<p class="error-detail">Si è verificato un errore imprevisto. Riprova più tardi.</p>
+		<a th:href="@{/}" class="main-link">Torna alla Home</a>
+	</div>
 
 </body>
+
 </html>

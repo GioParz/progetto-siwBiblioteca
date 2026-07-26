@@ -1,83 +1,54 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org"
-      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
 <head>
-    <title>BibliotecAmica - La tua biblioteca virtuale</title>
-    <link rel="stylesheet" th:href="@{/css/style.css}">
+	<title>BibliotecAmica - La tua biblioteca virtuale</title>
+	<link rel="stylesheet" th:href="@{/css/style.css}">
 </head>
+
 <body>
 
-    <div class="top-bar">
-        <div class="top-bar-right">
-            <span sec:authorize="isAnonymous()">
-                <a th:href="@{/login}" class="login-link">Accedi</a>
-            </span>
-            <span sec:authorize="isAuthenticated()" class="user-menu">
-                <span class="welcome-user">Ciao, <strong sec:authentication="name">Utente</strong>!</span>
-                <form th:action="@{/logout}" method="post">
-                    <button type="submit" class="logout-btn">Logout</button>
-                </form>
-            </span>
-        </div>
-    </div>
+	<div th:replace="~{fragments/header :: header('pubblico')}"></div>
 
-    <a th:href="@{/}" class="logo-wrapper">
-        <span class="brand-title">📚 Biblio<span>Hub</span></span>
-    </a>
+	<main class="main-content">
 
-    <main class="main-content">
+		<div>
+			<div class="title-box">Benvenuto/a in BibliotecAmica</div>
+		</div>
 
-        <div>
-            <div class="title-box">Benvenuto in BiblioHub</div>
-        </div>
+		<p class="welcome-text">
+			La tua biblioteca virtuale: sfoglia il catalogo, scopri nuovi autori e generi,
+			e costruisci la tua libreria personale di lettura.
+		</p>
 
-        <p class="welcome-text">
-            La tua biblioteca virtuale: sfoglia il catalogo, scopri nuovi autori e generi,
-            e costruisci la tua libreria personale di lettura.
-        </p>
+		<div class="buttons-container margin-bottom-lg">
+			<a th:href="@{/libri}" class="main-link">Sfoglia il Catalogo</a>
+			<a th:href="@{/autori}" class="main-link">Consulta Autori</a>
+			<a sec:authorize="isAuthenticated()" th:href="@{/libreria}" class="main-link admin-btn">La Mia Libreria</a>
+		</div>
 
-        <div class="buttons-container margin-bottom-lg">
-            <a th:href="@{/libri}" class="main-link">Sfoglia il Catalogo</a>
-            <a sec:authorize="isAuthenticated()" th:href="@{/libreria}" class="main-link admin-btn">La Mia Libreria</a>
-        </div>
+		<!-- Navigazione rapida per genere -->
+		<h2 class="section-title">Esplora per Genere</h2>
+		<div th:if="${#lists.isEmpty(generi)}" class="no-data-msg">Nessun genere disponibile al momento.</div>
+		<div th:unless="${#lists.isEmpty(generi)}" class="genre-badges-row">
+			<a th:each="genere : ${generi}" th:href="@{/genere/{id}(id=${genere.id})}" class="badge-genere"
+				th:text="${genere.nome}">Genere</a>
+		</div>
 
-        <!-- Navigazione rapida per genere -->
-        <h2 class="section-title">Esplora per Genere</h2>
-        <div th:if="${#lists.isEmpty(generi)}" class="no-data-msg">Nessun genere disponibile al momento.</div>
-        <div th:unless="${#lists.isEmpty(generi)}" class="genre-badges-row">
-            <a th:each="genere : ${generi}" th:href="@{/genere/{id}(id=${genere.id})}" class="badge-genere"
-               th:text="${genere.nome}">Genere</a>
-        </div>
+		<!-- Il motore dei consigli è una funzionalità riservata: qui compare solo un invito -->
+		<div sec:authorize="isAnonymous()" class="info-box margin-top-lg">
+			<p class="no-data-msg margin-bottom-sm">
+				Registrati per costruire la tua libreria personale e ricevere consigli di lettura su misura per te.
+			</p>
+			<a th:href="@{/register}" class="main-link">Registrati Gratis</a>
+		</div>
 
-        <!-- Libri consigliati (per l'utente loggato) o in evidenza (per l'anonimo) -->
-        <h2 class="section-title" sec:authorize="isAuthenticated()">Consigliati per Te</h2>
-        <h2 class="section-title" sec:authorize="isAnonymous()">In Evidenza nel Catalogo</h2>
+		<div sec:authorize="isAuthenticated()" class="margin-top-lg">
+			<a th:href="@{/libreria}" class="back-link">Vai alla tua Libreria e ai tuoi consigli di lettura →</a>
+		</div>
 
-        <div th:if="${#lists.isEmpty(libriConsigliati)}" class="no-data-msg">
-            Non ci sono ancora libri da mostrare in questa sezione.
-        </div>
-
-        <div th:each="libro : ${libriConsigliati}" class="library-item-card">
-            <img th:if="${libro.copertinaUrl != null and !libro.copertinaUrl.isEmpty()}"
-                 th:src="${libro.copertinaUrl}" alt="Copertina" class="book-cover-small" />
-            <div th:unless="${libro.copertinaUrl != null and !libro.copertinaUrl.isEmpty()}"
-                 class="book-cover-small book-cover-placeholder">📖</div>
-
-            <div class="library-item-details">
-                <a th:href="@{/libro/{id}(id=${libro.id})}" class="library-item-title" th:text="${libro.titolo}">Titolo Libro</a>
-                <div class="library-item-meta">
-                    <span th:if="${libro.autore != null}" th:text="${libro.autore.nome} + ' ' + ${libro.autore.cognome}">Autore</span>
-                    &middot;
-                    <span th:if="${libro.genere != null}" th:text="${libro.genere.nome}">Genere</span>
-                </div>
-            </div>
-        </div>
-
-        <div sec:authorize="isAuthenticated()" class="margin-top-sm">
-            <a th:href="@{/consigli}" class="back-link">Vedi tutti i tuoi consigli di lettura →</a>
-        </div>
-
-    </main>
+	</main>
 
 </body>
+
 </html>

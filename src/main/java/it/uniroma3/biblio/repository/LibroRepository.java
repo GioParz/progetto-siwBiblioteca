@@ -28,8 +28,9 @@ public interface LibroRepository extends CrudRepository<Libro, Long> {
            "LEFT JOIN FETCH l.genere " +
            "WHERE " +
            "(:genere IS NULL OR l.genere = :genere) AND " +
-           "(:query IS NULL OR LOWER(l.titolo) LIKE LOWER(CONCAT('%', :query, '%')) OR " +
-           "LOWER(l.autore.cognome) LIKE LOWER(CONCAT('%', :query, '%')))")
+           "(:query IS NULL OR " +
+           " LOWER(l.titolo) LIKE LOWER(CONCAT('%', CAST(:query AS string), '%')) OR " +
+           " LOWER(l.autore.cognome) LIKE LOWER(CONCAT('%', CAST(:query AS string), '%')))")
     public List<Libro> findByGenereEQuery(@Param("genere") Genere genere, @Param("query") String query);
     
     // Query con JOIN FETCH per evitare il problema N+1 sull'intero catalogo.

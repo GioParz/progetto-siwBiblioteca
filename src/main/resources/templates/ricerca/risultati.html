@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
+<head>
+	<title
+		th:text="${query != null and !query.isEmpty()} ? ('Risultati per &quot;' + ${query} + '&quot; - BibliotecAmica') : 'Ricerca - BibliotecAmica'">
+		Ricerca</title>
+	<link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+
+<body>
+
+	<div th:replace="~{fragments/header :: header('pubblico')}"></div>
+
+	<main class="main-content">
+
+		<div>
+			<div class="title-box">Risultati di Ricerca</div>
+		</div>
+
+		<p th:if="${query != null and !query.isEmpty()}" class="welcome-text font-size-md">
+			Hai cercato: <strong th:text="${query}">testo cercato</strong>
+		</p>
+		<p th:if="${query == null or query.isEmpty()}" class="no-data-msg">
+			Inserisci un termine nella barra di ricerca in alto per cercare tra libri, autori e generi.
+		</p>
+
+		<div th:if="${query != null and !query.isEmpty() and #lists.isEmpty(libri) and #lists.isEmpty(autori) and #lists.isEmpty(generi)}"
+			class="no-data-msg">
+			Nessun risultato trovato per <strong th:text="${query}">testo cercato</strong>. Prova con un altro termine.
+		</div>
+
+		<!-- Sezione LIBRI -->
+		<div th:if="${!#lists.isEmpty(libri)}" class="margin-top-lg">
+			<h2 class="section-title">Libri (<span th:text="${#lists.size(libri)}">0</span>)</h2>
+			<table class="library-table table-centered">
+				<thead>
+					<tr>
+						<th>Titolo</th>
+						<th>Autore</th>
+						<th>Genere</th>
+						<th>Anno</th>
+						<th>Azione</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr th:each="libro : ${libri}">
+						<td th:text="${libro.titolo}">Titolo</td>
+						<td>
+							<a th:if="${libro.autore != null}" th:href="@{/autore/{id}(id=${libro.autore.id})}"
+								class="action-link-view"
+								th:text="${libro.autore.nome} + ' ' + ${libro.autore.cognome}">Autore</a>
+						</td>
+						<td>
+							<a th:if="${libro.genere != null}" th:href="@{/genere/{id}(id=${libro.genere.id})}"
+								class="badge-genere" th:text="${libro.genere.nome}">Genere</a>
+						</td>
+						<td th:text="${libro.annoPubblicazione}">Anno</td>
+						<td>
+							<div class="action-buttons-cell">
+								<a th:href="@{/libro/{id}(id=${libro.id})}" class="action-link-view">Visualizza</a>
+							</div>
+						</td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+
+		<!-- Sezione AUTORI -->
+		<div th:if="${!#lists.isEmpty(autori)}" class="margin-top-lg">
+			<h2 class="section-title">Autori (<span th:text="${#lists.size(autori)}">0</span>)</h2>
+			<table class="library-table table-centered">
+				<thead>
+					<tr>
+						<th>Cognome</th>
+						<th>Nome</th>
+						<th>Nazionalità</th>
+						<th>Azioni</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr th:each="autore : ${autori}">
+						<td th:text="${autore.cognome}">Cognome</td>
+						<td th:text="${autore.nome}">Nome</td>
+						<td th:text="${autore.nazionalita}">Nazionalità</td>
+						<td>
+							<div class="action-buttons-cell">
+								<a th:href="@{/autore/{id}(id=${autore.id})}" class="action-link-view">Visualizza</a>
+							</div>
+						</td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+
+		<!-- Sezione GENERI -->
+		<div th:if="${!#lists.isEmpty(generi)}" class="margin-top-lg">
+			<h2 class="section-title">Generi (<span th:text="${#lists.size(generi)}">0</span>)</h2>
+			<table class="library-table table-centered">
+				<thead>
+					<tr>
+						<th>Nome Genere</th>
+						<th>Descrizione</th>
+						<th>Azioni</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr th:each="genere : ${generi}">
+						<td th:text="${genere.nome}">Nome Genere</td>
+						<td th:text="${genere.descrizione}">Descrizione</td>
+						<td>
+							<div class="action-buttons-cell">
+								<a th:href="@{/genere/{id}(id=${genere.id})}" class="action-link-view">Visualizza</a>
+							</div>
+						</td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+
+		<div class="margin-top-lg">
+			<a th:href="@{/}" class="back-link">← Torna alla Home</a>
+		</div>
+	</main>
+
+</body>
+
+</html>
