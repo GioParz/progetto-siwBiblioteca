@@ -47,9 +47,9 @@ public class SecurityConfiguration {
 		
 		httpSecurity.authorizeHttpRequests(authorize -> {
 			//rotte pubbliche
-			authorize.requestMatchers("/css/**", "/images/**", "/error/**", "/favicon.ico").permitAll();
+			authorize.requestMatchers(HttpMethod.GET, "/css/**", "/images/**", "/error/**", "/favicon.ico").permitAll();
 			authorize.requestMatchers(HttpMethod.GET, "/", "/index", "/register", "/libri", "/libro/{id}",
-					"/autori", "/autore/{id}", "/generi", "/genere/{id}").permitAll();
+					"/autori", "/autore/{id}", "/generi", "/genere/{id}", "/ricerca").permitAll();
 			authorize.requestMatchers(HttpMethod.POST, "/register", "/login").permitAll();
 			//rotte admin
 			authorize.requestMatchers(HttpMethod.GET, "/admin/**").hasAnyAuthority("ADMIN");

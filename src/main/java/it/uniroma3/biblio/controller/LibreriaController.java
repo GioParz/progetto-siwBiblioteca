@@ -25,6 +25,8 @@ import it.uniroma3.biblio.service.ElementoLibreriaService;
 @Controller
 public class LibreriaController {
 
+	private static final int ANTEPRIMA_CONSIGLI_IN_LIBRERIA = 3;
+
 	private final ElementoLibreriaService elementoLibreriaService;
 	private final ConsigliService consigliService;
 	private final CredentialsService credentialsService;
@@ -54,10 +56,16 @@ public class LibreriaController {
 		model.addAttribute("libreria", libreria);
 		model.addAttribute("statiLettura", StatoLettura.values());
 
+		// Il motore dei consigli (funzionalità riservata) compare qui, dentro la libreria
+		// personale, come piccola anteprima: il link "Vedi tutti i consigli" porta alla
+		// pagina dedicata /consigli con la lista completa.
+		model.addAttribute("anteprimaConsigli",
+				this.consigliService.calcolaLibriConsigliati(utente, ANTEPRIMA_CONSIGLI_IN_LIBRERIA));
+
 		return "libreria/list";
 	}
 
-	/* CU-2: AGGIUNTA DI UN LIBRO ALLA LIBRERIA PERSONALE */
+	/* AGGIUNTA DI UN LIBRO ALLA LIBRERIA PERSONALE */
 
 	@PostMapping("/libreria/aggiungi/{libroId}")
 	public String aggiungiALibreria(@PathVariable("libroId") Long libroId,
@@ -75,7 +83,7 @@ public class LibreriaController {
 		return "redirect:/libro/" + libroId;
 	}
 
-	/* CU-3: AGGIORNAMENTO STATO LETTURA E VALUTAZIONE */
+	/* AGGIORNAMENTO STATO LETTURA E VALUTAZIONE */
 
 	@PostMapping("/libreria/{elementoId}/aggiorna")
 	public String aggiornaSchedaLettura(@PathVariable("elementoId") Long elementoId,
@@ -95,7 +103,7 @@ public class LibreriaController {
 		return "redirect:/libreria";
 	}
 
-	/* CU-4: RIMOZIONE DI UN LIBRO DALLA LIBRERIA PERSONALE */
+	/* RIMOZIONE DI UN LIBRO DALLA LIBRERIA PERSONALE */
 
 	@PostMapping("/libreria/{elementoId}/rimuovi")
 	public String rimuoviDaLibreria(@PathVariable("elementoId") Long elementoId,
@@ -113,7 +121,7 @@ public class LibreriaController {
 		return "redirect:/libreria";
 	}
 
-	/* CU-6: MOTORE DI RACCOMANDAZIONE */
+	/* MOTORE DI RACCOMANDAZIONE (pagina dedicata, lista completa) */
 
 	@GetMapping("/consigli")
 	public String getConsigli(@AuthenticationPrincipal UserDetails userDetails, Model model) {
