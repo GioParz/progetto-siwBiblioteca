@@ -73,7 +73,7 @@
 						<img th:if="${libro.copertinaUrl != null and !libro.copertinaUrl.isEmpty()}"
 							th:src="${libro.copertinaUrl}" alt="Copertina" class="book-cover-small" />
 						<div th:unless="${libro.copertinaUrl != null and !libro.copertinaUrl.isEmpty()}"
-							class="book-cover-small book-cover-placeholder">📖</div>
+							class="book-cover-small book-cover-placeholder"> 📖 </div>
 					</td>
 					<td th:text="${libro.titolo}">Titolo Libro</td>
 					<td>
