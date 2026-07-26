@@ -43,7 +43,7 @@ public class GenereController {
 		return "generi/show";
 	}
 
-	/* INSERIMENTO NUOVO GENERE (Admin, usato anche dal form di creazione Libro) */
+	/* INSERIMENTO NUOVO GENERE (usato anche dal form di creazione Libro) */
 
 	@GetMapping("/admin/genere/new")
 	public String mostraFormGenere(Model model) {
@@ -62,7 +62,7 @@ public class GenereController {
 		try {
 			this.genereService.save(genere);
 		} catch (DataIntegrityViolationException e) {
-			bindingResult.rejectValue("nome", "genere.duplicato", "Esiste già un genere con questo nome.");
+			bindingResult.rejectValue("nome", "genere.duplicato", e.getMessage());
 			return "admin/generi/form";
 		}
 

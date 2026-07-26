@@ -25,7 +25,7 @@ public class GenereService {
 
     public Genere findById(Long id) {
         return this.genereRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Genere non trovato con id: " + id));
+                .orElseThrow(() -> new ResourceNotFoundException("Genere con id: " + id + " non trovato."));
     }
 
     @Transactional(isolation = Isolation.READ_COMMITTED)

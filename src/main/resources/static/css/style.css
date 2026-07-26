@@ -49,12 +49,67 @@ body {
 .top-bar {
     background-color: #3b2a1a; /* legno / cuoio */
     padding: 10px 20px;
-    height: 50px;
+    min-height: 50px;
     display: flex;
-    justify-content: flex-end;
+    justify-content: space-between; /* barra di ricerca a sinistra, login/utente a destra */
     align-items: center;
+    gap: 20px;
+    flex-wrap: wrap;
     border-bottom: 2px solid #c9a227; /* filo dorato */
     box-shadow: 0 4px 15px rgba(201, 162, 39, 0.12);
+}
+
+/* ---- Barra di ricerca globale (dentro il top-bar, presente in tutte le pagine) ---- */
+.top-bar-left {
+    display: flex;
+    align-items: center;
+    flex: 1 1 auto;
+    min-width: 200px;
+}
+
+.top-bar-search {
+    display: flex;
+    gap: 6px;
+    width: 100%;
+    max-width: 360px;
+}
+
+.top-bar-search input {
+    flex: 1 1 auto;
+    background-color: #241a10;
+    border: 1px solid #5a3f26;
+    border-radius: 4px;
+    padding: 7px 10px;
+    color: #f0e6d2;
+    font-family: 'Lora', serif;
+    font-size: 13px;
+    transition: all 0.2s ease;
+}
+
+.top-bar-search input:focus {
+    outline: none;
+    border-color: #c9a227;
+    box-shadow: 0 0 8px rgba(201, 162, 39, 0.35);
+}
+
+.top-bar-search input::placeholder {
+    color: #8a7a5f;
+}
+
+.top-bar-search-btn {
+    background: none;
+    border: 1px solid #5a3f26;
+    border-radius: 4px;
+    color: #f0e6d2;
+    cursor: pointer;
+    padding: 7px 12px;
+    font-size: 13px;
+    transition: all 0.2s ease;
+}
+
+.top-bar-search-btn:hover {
+    border-color: #c9a227;
+    color: #c9a227;
 }
 
 .top-bar.admin-bar {
@@ -136,17 +191,22 @@ body {
     text-decoration: none;
 }
 
-.brand-title {
-    font-family: 'Playfair Display', serif;
-    font-size: 32px;
-    font-weight: 900;
-    color: #f0e6d2;
-    letter-spacing: 1px;
+.logo-img {
+    display: block;
+    height: 90px;
+    width: auto;
+    max-width: 90%;
+    border-radius: 6px;
+    transition: opacity 0.2s ease;
 }
 
-.brand-title span {
-    color: #c9a227;
+.logo-wrapper:hover .logo-img {
+    opacity: 0.85;
 }
+
+/* Nota: le regole .brand-title sono state rimosse insieme al testo "BiblioHub" nell'header,
+   sostituito dall'immagine logo.jpg tramite .logo-img. Se in futuro dovessi rimuovere
+   di nuovo il logo e tornare al testo, tieni presente che questa classe non esiste più. */
 
 /* ==========================================================================
    4. COPERTINE LIBRI E RITRATTI
