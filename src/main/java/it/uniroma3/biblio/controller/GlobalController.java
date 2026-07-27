@@ -11,14 +11,20 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 public class GlobalController {
     
 	@ModelAttribute("userDetails")
-    public UserDetails getUser() {
-        UserDetails user = null;
+	public UserDetails getUser() {
+	    Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        if (!(authentication instanceof AnonymousAuthenticationToken)) {
-            user = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        }
-        
-        return user;
-    }
+	    if (authentication == null || authentication instanceof AnonymousAuthenticationToken) {
+	        return null;
+	    }
+
+	    Object principal = authentication.getPrincipal();
+
+	    // Con Google il principal è un DefaultOidcUser, non un UserDetails
+	    if (principal instanceof UserDetails) {
+	        return (UserDetails) principal;
+	    }
+
+	    return null;
+	}
 }

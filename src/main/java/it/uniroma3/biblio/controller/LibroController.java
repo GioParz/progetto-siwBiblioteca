@@ -1,8 +1,8 @@
 package it.uniroma3.biblio.controller;
 
+import java.security.Principal;
+
 import org.springframework.dao.DataIntegrityViolationException;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -60,7 +60,7 @@ public class LibroController {
 
 	@GetMapping("/libro/{id}")
 	public String getLibro(@PathVariable("id") Long id, Model model,
-			@AuthenticationPrincipal UserDetails userDetails) {
+			Principal principal) {
 
 		Libro libro = this.libroService.findById(id);
 
@@ -68,8 +68,8 @@ public class LibroController {
 		model.addAttribute("mediaVoto", this.elementoLibreriaService.calcolaMediaVotoLibro(libro));
 
 		// se l'utente è loggato, verifica se il libro è già nella sua libreria personale
-		if (userDetails != null) {
-			Utente utenteLoggato = this.credentialsService.getCredentialsByUsername(userDetails.getUsername()).getUtente();
+		if (principal != null) {
+			Utente utenteLoggato = this.credentialsService.getCredentialsByUsername(principal.getName()).getUtente();
 			boolean giaInLibreria = this.elementoLibreriaService.isLibroInLibreria(utenteLoggato, libro);
 			model.addAttribute("giaInLibreria", giaInLibreria);
 		}

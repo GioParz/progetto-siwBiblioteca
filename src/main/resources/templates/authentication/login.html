@@ -42,6 +42,14 @@
 				<button type="submit" class="main-link">Accedi</button>
 			</div>
 		</form>
+		
+		<!-- Login con OAuth Google -->
+		<div class="margin-top-lg" style="text-align:center;">
+		    <p>oppure</p>
+		    <a th:href="@{/oauth2/authorization/google}" class="main-link">
+		        Accedi con Google
+		    </a>
+		</div>
 
 		<p class="no-data-msg margin-top-lg">
 			Non hai ancora un account? <a th:href="@{/register}">Registrati qui</a>

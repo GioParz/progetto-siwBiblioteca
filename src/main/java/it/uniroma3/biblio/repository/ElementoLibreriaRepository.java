@@ -35,11 +35,6 @@ public interface ElementoLibreriaRepository extends CrudRepository<ElementoLibre
     boolean existsByUtenteAndLibro(Utente utente, Libro libro);
     
     boolean existsByLibroId(Long libroId);
-
-    // Estrae i generi preferiti dall'utente (libri valutati 4+ stelle)
-    @Query("SELECT DISTINCT el.libro.genere FROM ElementoLibreria el " +
-            "WHERE el.utente = :utente AND el.valutazione >= 4")
-     List<Genere> findGeneriPreferitiDaUtente(@Param("utente") Utente utente);
     
     /**
      * Come findGeneriPreferitiDaUtente, ma con il "peso" (numero di libri di quel genere
@@ -62,11 +57,16 @@ public interface ElementoLibreriaRepository extends CrudRepository<ElementoLibre
      * dal più votato al meno votato. Usata dal motore dei consigli insieme ai generi
      * preferiti (vedi ConsigliService.calcolaLibriConsigliati).
      */
-    @Query("SELECT el.libro.autore FROM ElementoLibreria el " +
+    @Query("SELECT el.libro.autore AS autore, COUNT(el.libro.autore) AS peso FROM ElementoLibreria el " +
             "WHERE el.utente = :utente AND el.valutazione >= 4 " +
             "GROUP BY el.libro.autore " +
             "ORDER BY COUNT(el.libro.autore) DESC")
-     List<Autore> findAutoriPreferitiDaUtente(@Param("utente") Utente utente);
+     List<AutorePreferito> findAutoriPreferitiConPesoDaUtente(@Param("utente") Utente utente);
+    
+    interface AutorePreferito {
+        Autore getAutore();
+        Long getPeso();
+    }
 
     // Calcola la media voti complessiva di un libro (utilizzata nella scheda dettaglio libro)
     @Query("SELECT AVG(el.valutazione) FROM ElementoLibreria el WHERE el.libro = :libro AND el.valutazione IS NOT NULL")

@@ -1,7 +1,5 @@
 package it.uniroma3.biblio.controller;
 
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -18,7 +16,7 @@ public class HomeController {
 	}
 
 	@GetMapping("/")
-    public String index(Model model, @AuthenticationPrincipal UserDetails userDetails) {
+    public String index(Model model) {
         
         model.addAttribute("generi", this.genereService.findAll());
 

@@ -1,10 +1,9 @@
 package it.uniroma3.biblio.controller;
 
+import java.security.Principal;
 import java.util.List;
 
 import org.springframework.security.access.AccessDeniedException;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -39,17 +38,17 @@ public class LibreriaController {
 	}
 
 	// metodo helper per recuperare l'Utente di dominio a partire dall'utente autenticato da Spring Security
-	private Utente getUtenteLoggato(UserDetails userDetails) {
-		Credentials credentials = this.credentialsService.getCredentialsByUsername(userDetails.getUsername());
-		return credentials.getUtente();
+	private Utente getUtenteLoggato(Principal principal) {
+	    Credentials credentials = this.credentialsService.getCredentialsByUsername(principal.getName());
+	    return credentials.getUtente();
 	}
 
 	/* VISUALIZZAZIONE LIBRERIA PERSONALE */
 
 	@GetMapping("/libreria")
-	public String getLibreria(@AuthenticationPrincipal UserDetails userDetails, Model model) {
+	public String getLibreria(Principal principal, Model model) {
 
-		Utente utente = this.getUtenteLoggato(userDetails);
+		Utente utente = this.getUtenteLoggato(principal);
 
 		List<ElementoLibreria> libreria = this.elementoLibreriaService.findByUtente(utente);
 
@@ -69,9 +68,9 @@ public class LibreriaController {
 
 	@PostMapping("/libreria/aggiungi/{libroId}")
 	public String aggiungiALibreria(@PathVariable("libroId") Long libroId,
-			@AuthenticationPrincipal UserDetails userDetails, RedirectAttributes redirectAttributes) {
+			Principal principal, RedirectAttributes redirectAttributes) {
 
-		Long utenteId = this.getUtenteLoggato(userDetails).getId();
+		Long utenteId = this.getUtenteLoggato(principal).getId();
 
 		try {
 			this.elementoLibreriaService.aggiungiLibroALibreria(utenteId, libroId);
@@ -89,9 +88,9 @@ public class LibreriaController {
 	public String aggiornaSchedaLettura(@PathVariable("elementoId") Long elementoId,
 			@RequestParam(value = "statoLettura", required = false) StatoLettura statoLettura,
 			@RequestParam(value = "valutazione", required = false) Integer valutazione,
-			@AuthenticationPrincipal UserDetails userDetails, RedirectAttributes redirectAttributes) {
+			Principal principal, RedirectAttributes redirectAttributes) {
 
-		Utente utente = this.getUtenteLoggato(userDetails);
+		Utente utente = this.getUtenteLoggato(principal);
 
 		try {
 			this.elementoLibreriaService.aggiornaSchedaLettura(elementoId, statoLettura, valutazione, utente);
@@ -107,9 +106,9 @@ public class LibreriaController {
 
 	@PostMapping("/libreria/{elementoId}/rimuovi")
 	public String rimuoviDaLibreria(@PathVariable("elementoId") Long elementoId,
-			@AuthenticationPrincipal UserDetails userDetails, RedirectAttributes redirectAttributes) {
+			Principal principal, RedirectAttributes redirectAttributes) {
 
-		Utente utente = this.getUtenteLoggato(userDetails);
+		Utente utente = this.getUtenteLoggato(principal);
 
 		try {
 			this.elementoLibreriaService.rimuoviDaLibreria(elementoId, utente);
@@ -124,9 +123,9 @@ public class LibreriaController {
 	/* MOTORE DI RACCOMANDAZIONE (pagina dedicata, lista completa) */
 
 	@GetMapping("/consigli")
-	public String getConsigli(@AuthenticationPrincipal UserDetails userDetails, Model model) {
+	public String getConsigli(Principal principal, Model model) {
 
-		Utente utente = this.getUtenteLoggato(userDetails);
+		Utente utente = this.getUtenteLoggato(principal);
 
 		model.addAttribute("libriConsigliati", this.consigliService.calcolaLibriConsigliati(utente));
 

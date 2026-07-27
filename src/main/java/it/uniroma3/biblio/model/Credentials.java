@@ -39,6 +39,17 @@ public class Credentials {
     @Valid
     @OneToOne(cascade = CascadeType.ALL, optional = false)
     private Utente utente;
+    
+    @Column(nullable = false)
+    private boolean oauth = false;
+
+    public boolean isOauth() {
+        return oauth;
+    }
+
+    public void setOauth(boolean oauth) {
+        this.oauth = oauth;
+    }
 
 	public Long getId() {
 		return id;

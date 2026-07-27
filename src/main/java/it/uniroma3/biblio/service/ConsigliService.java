@@ -16,6 +16,7 @@ import it.uniroma3.biblio.model.Genere;
 import it.uniroma3.biblio.model.Libro;
 import it.uniroma3.biblio.model.Utente;
 import it.uniroma3.biblio.repository.ElementoLibreriaRepository;
+import it.uniroma3.biblio.repository.ElementoLibreriaRepository.AutorePreferito;
 import it.uniroma3.biblio.repository.ElementoLibreriaRepository.GenerePreferito;
 import it.uniroma3.biblio.repository.LibroRepository;
 
@@ -53,7 +54,7 @@ public class ConsigliService {
 
     public List<Libro> calcolaLibriConsigliati(Utente utente, int limite) {
 
-        List<Autore> autoriPreferiti = this.elementoLibreriaRepository.findAutoriPreferitiDaUtente(utente);
+        List<AutorePreferito> autoriPreferiti = this.elementoLibreriaRepository.findAutoriPreferitiConPesoDaUtente(utente);
         List<GenerePreferito> generiPreferiti = this.elementoLibreriaRepository.findGeneriPreferitiConPesoDaUtente(utente);
 
         if (generiPreferiti.isEmpty() && autoriPreferiti.isEmpty()) {
@@ -63,8 +64,8 @@ public class ConsigliService {
         // peso per autore: in base alla posizione nella lista già ordinata per rilevanza
         // (findAutoriPreferitiDaUtente è già ORDER BY COUNT DESC)
         Map<Autore, Long> pesoAutore = new HashMap<>();
-        for (int i = 0; i < autoriPreferiti.size(); i++) {
-            pesoAutore.put(autoriPreferiti.get(i), (long) (autoriPreferiti.size() - i));
+        for (AutorePreferito ap : autoriPreferiti) {
+            pesoAutore.put(ap.getAutore(), ap.getPeso());
         }
 
         // peso per genere: numero di libri di quel genere valutati 4-5 stelle
@@ -77,7 +78,8 @@ public class ConsigliService {
         // o per genere preferito, non ancora in libreria
         Set<Libro> candidati = new LinkedHashSet<>();
         if (!autoriPreferiti.isEmpty()) {
-            candidati.addAll(this.libroRepository.findSuggeritiPerAutoriEUtente(autoriPreferiti, utente));
+            candidati.addAll(this.libroRepository.findSuggeritiPerAutoriEUtente(
+            		List.copyOf(pesoAutore.keySet()), utente));
         }
         if (!pesoGenere.isEmpty()) {
             candidati.addAll(this.libroRepository.findSuggeritiPerGeneriEUtente(

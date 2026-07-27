@@ -9,8 +9,6 @@ import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.provisioning.JdbcUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
 
@@ -19,9 +17,11 @@ import org.springframework.security.web.SecurityFilterChain;
 public class SecurityConfiguration {
 	
 	private final DataSource dataSource;
-	
-	public SecurityConfiguration(DataSource dataSource) {
-		this.dataSource = dataSource;
+	private final CustomOAuth2UserService customOAuth2UserService;
+
+	public SecurityConfiguration(DataSource dataSource, CustomOAuth2UserService customOAuth2UserService) {
+	    this.dataSource = dataSource;
+	    this.customOAuth2UserService = customOAuth2UserService;
 	}
 	
 	@Bean
@@ -35,11 +35,6 @@ public class SecurityConfiguration {
 				"SELECT username, ruolo FROM credentials WHERE username=?");
 		
 		return manager;
-	}
-	
-	@Bean
-	public PasswordEncoder passwordEncoder() {
-		return new BCryptPasswordEncoder();
 	}
 	
 	@Bean
@@ -69,6 +64,12 @@ public class SecurityConfiguration {
 			form.loginPage("/login").permitAll();
 			form.defaultSuccessUrl("/", true);
 			form.failureUrl("/login?error=true");
+		});
+		
+		httpSecurity.oauth2Login(oauth2 -> {
+		    oauth2.loginPage("/login");
+		    oauth2.userInfoEndpoint(userInfo -> userInfo.oidcUserService(this.customOAuth2UserService));
+		    oauth2.defaultSuccessUrl("/", true);
 		});
 		
 		httpSecurity.logout(logout -> {

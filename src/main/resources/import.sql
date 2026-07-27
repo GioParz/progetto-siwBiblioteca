@@ -130,27 +130,27 @@ INSERT INTO libro (id, titolo, isbn, anno_pubblicazione, trama, copertina_url, a
 
 -- Amministratore (username: admin | password: admin123)
 INSERT INTO users (id, nome, cognome, email) VALUES (nextval('utente_seq'), 'Direttrice', 'Biblioteca', 'direzione@bibliohub.it');
-INSERT INTO credentials (id, username, password, ruolo, utente_id) VALUES (nextval('credentials_seq'), 'admin', '$2a$10$1pWD29vOPWS1oSjaSR41wO9kYEdt0.jSczqUQoFRRdnDMKHT0iQtm', 'ADMIN', (SELECT id FROM users WHERE cognome = 'Biblioteca'));
+INSERT INTO credentials (id, username, password, ruolo, utente_id, oauth) VALUES (nextval('credentials_seq'), 'admin', '$2a$10$1pWD29vOPWS1oSjaSR41wO9kYEdt0.jSczqUQoFRRdnDMKHT0iQtm', 'ADMIN', (SELECT id FROM users WHERE cognome = 'Biblioteca'), false);
 
 -- Lucia: grande appassionata di Fantasy, in particolare di Tolkien (username: lucia | password: user123)
 INSERT INTO users (id, nome, cognome, email) VALUES (nextval('utente_seq'), 'Lucia', 'Bianchi', 'lucia.bianchi@gmail.com');
-INSERT INTO credentials (id, username, password, ruolo, utente_id) VALUES (nextval('credentials_seq'), 'lucia', '$2a$10$xq1wMvOsPJekW7FF..Xc4.cynxv59yB9gPtrwPeY/.RC5meVVxqRC', 'USER', (SELECT id FROM users WHERE cognome = 'Bianchi'));
+INSERT INTO credentials (id, username, password, ruolo, utente_id, oauth) VALUES (nextval('credentials_seq'), 'lucia', '$2a$10$xq1wMvOsPJekW7FF..Xc4.cynxv59yB9gPtrwPeY/.RC5meVVxqRC', 'USER', (SELECT id FROM users WHERE cognome = 'Bianchi'), false);
 
 -- Marco: appassionato di Giallo, in particolare di Christie (username: marco | password: user123)
 INSERT INTO users (id, nome, cognome, email) VALUES (nextval('utente_seq'), 'Marco', 'Verdi', 'marco.verdi@gmail.com');
-INSERT INTO credentials (id, username, password, ruolo, utente_id) VALUES (nextval('credentials_seq'), 'marco', '$2a$10$xq1wMvOsPJekW7FF..Xc4.cynxv59yB9gPtrwPeY/.RC5meVVxqRC', 'USER', (SELECT id FROM users WHERE cognome = 'Verdi'));
+INSERT INTO credentials (id, username, password, ruolo, utente_id, oauth) VALUES (nextval('credentials_seq'), 'marco', '$2a$10$xq1wMvOsPJekW7FF..Xc4.cynxv59yB9gPtrwPeY/.RC5meVVxqRC', 'USER', (SELECT id FROM users WHERE cognome = 'Verdi'), false);
 
--- Giulia (NUOVA): "completista" di Orwell in due generi diversi (Distopico + Saggistica),
+-- Giulia: "completista" di Orwell in due generi diversi (Distopico + Saggistica),
 -- utile per verificare che il suggerimento per autore preferito funzioni anche a cavallo
 -- tra generi diversi (username: giulia | password: user123)
 INSERT INTO users (id, nome, cognome, email) VALUES (nextval('utente_seq'), 'Giulia', 'Rossi', 'giulia.rossi@gmail.com');
-INSERT INTO credentials (id, username, password, ruolo, utente_id) VALUES (nextval('credentials_seq'), 'giulia', '$2a$10$xq1wMvOsPJekW7FF..Xc4.cynxv59yB9gPtrwPeY/.RC5meVVxqRC', 'USER', (SELECT id FROM users WHERE cognome = 'Rossi'));
+INSERT INTO credentials (id, username, password, ruolo, utente_id, oauth) VALUES (nextval('credentials_seq'), 'giulia', '$2a$10$xq1wMvOsPJekW7FF..Xc4.cynxv59yB9gPtrwPeY/.RC5meVVxqRC', 'USER', (SELECT id FROM users WHERE cognome = 'Rossi'), false);
 
--- Paolo (NUOVO): utente appena iscritto, con un solo libro da leggere e nessuna
+-- Paolo: utente appena iscritto, con un solo libro da leggere e nessuna
 -- valutazione. Serve a verificare il "caso limite": il motore dei consigli deve restare
 -- vuoto (nessun fallback generico) finché non ci sono abbastanza dati (username: paolo | password: user123)
 INSERT INTO users (id, nome, cognome, email) VALUES (nextval('utente_seq'), 'Paolo', 'Ferrari', 'paolo.ferrari@gmail.com');
-INSERT INTO credentials (id, username, password, ruolo, utente_id) VALUES (nextval('credentials_seq'), 'paolo', '$2a$10$xq1wMvOsPJekW7FF..Xc4.cynxv59yB9gPtrwPeY/.RC5meVVxqRC', 'USER', (SELECT id FROM users WHERE cognome = 'Ferrari'));
+INSERT INTO credentials (id, username, password, ruolo, utente_id, oauth) VALUES (nextval('credentials_seq'), 'paolo', '$2a$10$xq1wMvOsPJekW7FF..Xc4.cynxv59yB9gPtrwPeY/.RC5meVVxqRC', 'USER', (SELECT id FROM users WHERE cognome = 'Ferrari'), false);
 
 
 -- ====================================================================
