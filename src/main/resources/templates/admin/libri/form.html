@@ -20,7 +20,7 @@
 		</div>
 
 		<form th:action="${libro.id != null} ? @{/admin/libro/{id}/edit(id=${libro.id})} : @{/admin/libri}"
-			th:object="${libro}" method="post" class="library-form">
+		    th:object="${libro}" method="post" enctype="multipart/form-data" class="library-form">
 
 			<div th:if="${#fields.hasGlobalErrors()}" class="error-msg">
 				<ul class="no-margin">
@@ -73,10 +73,12 @@
 			</div>
 
 			<div class="form-group">
-				<label>URL Copertina (opzionale)</label>
-				<input type="text" th:field="*{copertinaUrl}" placeholder="https://..." />
-				<span th:if="${#fields.hasErrors('copertinaUrl')}" th:errors="*{copertinaUrl}"
-					class="field-error"></span>
+				<label>Copertina del libro (opzionale)</label>
+				<div th:if="${libro.copertinaUrl != null and !libro.copertinaUrl.isEmpty()}" class="margin-top-sm">
+					<img th:src="${libro.copertinaUrl}" alt="Copertina attuale" style="max-height:150px;" />
+				</div>
+				<input type="file" name="copertinaFile" accept="image/*" />
+				<span th:if="${errorMessage}" th:text="${errorMessage}" class="field-error"></span>
 			</div>
 
 			<div class="margin-top-lg">
