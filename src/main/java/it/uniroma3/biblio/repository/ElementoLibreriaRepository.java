@@ -38,8 +38,24 @@ public interface ElementoLibreriaRepository extends CrudRepository<ElementoLibre
 
     // Estrae i generi preferiti dall'utente (libri valutati 4+ stelle)
     @Query("SELECT DISTINCT el.libro.genere FROM ElementoLibreria el " +
-           "WHERE el.utente = :utente AND el.valutazione >= 4")
-    List<Genere> findGeneriPreferitiDaUtente(@Param("utente") Utente utente);
+            "WHERE el.utente = :utente AND el.valutazione >= 4")
+     List<Genere> findGeneriPreferitiDaUtente(@Param("utente") Utente utente);
+    
+    /**
+     * Come findGeneriPreferitiDaUtente, ma con il "peso" (numero di libri di quel genere
+     * valutati 4+ stelle): usato dal motore dei consigli sia per ordinare i generi tra
+     * loro sia per ordinare i libri ALL'INTERNO di ciascuna fascia di rilevanza.
+     */
+    @Query("SELECT el.libro.genere AS genere, COUNT(el.libro.genere) AS peso FROM ElementoLibreria el " +
+           "WHERE el.utente = :utente AND el.valutazione >= 4 " +
+           "GROUP BY el.libro.genere " +
+           "ORDER BY COUNT(el.libro.genere) DESC")
+    List<GenerePreferito> findGeneriPreferitiConPesoDaUtente(@Param("utente") Utente utente);
+
+    interface GenerePreferito {
+        Genere getGenere();
+        Long getPeso();
+    }
 
     /**
      * Estrae gli autori preferiti dall'utente: gli autori con più libri valutati 4+ stelle,
@@ -47,10 +63,10 @@ public interface ElementoLibreriaRepository extends CrudRepository<ElementoLibre
      * preferiti (vedi ConsigliService.calcolaLibriConsigliati).
      */
     @Query("SELECT el.libro.autore FROM ElementoLibreria el " +
-           "WHERE el.utente = :utente AND el.valutazione >= 4 " +
-           "GROUP BY el.libro.autore " +
-           "ORDER BY COUNT(el.libro.autore) DESC")
-    List<Autore> findAutoriPreferitiDaUtente(@Param("utente") Utente utente);
+            "WHERE el.utente = :utente AND el.valutazione >= 4 " +
+            "GROUP BY el.libro.autore " +
+            "ORDER BY COUNT(el.libro.autore) DESC")
+     List<Autore> findAutoriPreferitiDaUtente(@Param("utente") Utente utente);
 
     // Calcola la media voti complessiva di un libro (utilizzata nella scheda dettaglio libro)
     @Query("SELECT AVG(el.valutazione) FROM ElementoLibreria el WHERE el.libro = :libro AND el.valutazione IS NOT NULL")
