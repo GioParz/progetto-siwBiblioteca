@@ -66,11 +66,6 @@ public class AuthenticationController {
 		return "redirect:/login?registered";
 	}
 	
-	@GetMapping("/access-denied")
-    public String accessDenied() {
-        return "access-denied";
-    }
-	
 	/* ADMIN */
 	
 	@GetMapping("/admin/index")

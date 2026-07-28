@@ -37,7 +37,7 @@ public class LibreriaController {
 		this.credentialsService = credentialsService;
 	}
 
-	// metodo helper per recuperare l'Utente di dominio a partire dall'utente autenticato da Spring Security
+	// metodo helper per recuperare l'Utente di dominio a partire dall'utente autenticato
 	private Utente getUtenteLoggato(Principal principal) {
 	    Credentials credentials = this.credentialsService.getCredentialsByUsername(principal.getName());
 	    return credentials.getUtente();
@@ -61,12 +61,12 @@ public class LibreriaController {
 		model.addAttribute("anteprimaConsigli",
 				this.consigliService.calcolaLibriConsigliati(utente, ANTEPRIMA_CONSIGLI_IN_LIBRERIA));
 
-		return "libreria/list";
+		return "libreria/show";
 	}
 
 	/* AGGIUNTA DI UN LIBRO ALLA LIBRERIA PERSONALE */
 
-	@PostMapping("/libreria/aggiungi/{libroId}")
+	@PostMapping("/libreria/add/{libroId}")
 	public String aggiungiALibreria(@PathVariable("libroId") Long libroId,
 			Principal principal, RedirectAttributes redirectAttributes) {
 
@@ -84,7 +84,7 @@ public class LibreriaController {
 
 	/* AGGIORNAMENTO STATO LETTURA E VALUTAZIONE */
 
-	@PostMapping("/libreria/{elementoId}/aggiorna")
+	@PostMapping("/libreria/{elementoId}/edit")
 	public String aggiornaSchedaLettura(@PathVariable("elementoId") Long elementoId,
 			@RequestParam(value = "statoLettura", required = false) StatoLettura statoLettura,
 			@RequestParam(value = "valutazione", required = false) Integer valutazione,
@@ -104,7 +104,7 @@ public class LibreriaController {
 
 	/* RIMOZIONE DI UN LIBRO DALLA LIBRERIA PERSONALE */
 
-	@PostMapping("/libreria/{elementoId}/rimuovi")
+	@PostMapping("/libreria/{elementoId}/remove")
 	public String rimuoviDaLibreria(@PathVariable("elementoId") Long elementoId,
 			Principal principal, RedirectAttributes redirectAttributes) {
 

@@ -21,11 +21,6 @@
 			Username o password non validi. Riprova.
 		</div>
 
-		<!-- Messaggio di registrazione avvenuta con successo -->
-		<div th:if="${param.registered}" class="alert alert-success">
-			Registrazione completata! Ora puoi effettuare l'accesso.
-		</div>
-
 		<form th:action="@{/login}" method="post" class="library-form">
 
 			<div class="form-group">
@@ -44,7 +39,7 @@
 		</form>
 		
 		<!-- Login con OAuth Google -->
-		<div class="margin-top-lg" style="text-align:center;">
+		<div class="margin-top-lg">
 		    <p>oppure</p>
 		    <a th:href="@{/oauth2/authorization/google}" class="main-link">
 		        Accedi con Google

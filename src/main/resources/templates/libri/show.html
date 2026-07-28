@@ -31,15 +31,14 @@
 		<!-- Box informazioni -->
 		<div class="info-box">
 			<div sec:authorize="hasAuthority('ADMIN')" class="text-right margin-bottom-sm">
-				<a th:href="@{/admin/libro/{id}/edit(id=${libro.id})}" class="action-link-edit font-size-md">Modifica
-					Libro</a>
+				<a th:href="@{/admin/libro/{id}/edit(id=${libro.id})}" class="action-link-edit font-size-md">Modifica Libro</a>
 			</div>
 			<p><strong>Autore:</strong>
-				<a th:if="${libro.autore != null}" th:href="@{/autore/{id}(id=${libro.autore.id})}"
+				<a th:href="@{/autore/{id}(id=${libro.autore.id})}"
 					th:text="${libro.autore.nome} + ' ' + ${libro.autore.cognome}">Autore</a>
 			</p>
 			<p><strong>Genere:</strong>
-				<a th:if="${libro.genere != null}" th:href="@{/genere/{id}(id=${libro.genere.id})}" class="badge-genere"
+				<a th:href="@{/genere/{id}(id=${libro.genere.id})}" class="badge-genere"
 					th:text="${libro.genere.nome}">Genere</a>
 			</p>
 			<p><strong>ISBN:</strong> <span th:text="${libro.isbn}">ISBN</span></p>
@@ -70,7 +69,7 @@
 				<p class="no-margin">✓ Questo libro è già presente nella tua libreria personale.</p>
 				<a th:href="@{/libreria}" class="action-link-view">Vai alla tua Libreria</a>
 			</div>
-			<form th:unless="${giaInLibreria}" th:action="@{/libreria/aggiungi/{id}(id=${libro.id})}" method="post">
+			<form th:unless="${giaInLibreria}" th:action="@{/libreria/add/{id}(id=${libro.id})}" method="post">
 				<button type="submit" class="main-link">+ Aggiungi alla mia Libreria</button>
 			</form>
 		</div>

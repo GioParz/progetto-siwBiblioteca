@@ -52,7 +52,7 @@ public class LibroRestController {
 		return map; // Spring/Jackson trasformerà la mappa in JSON
 	}
 
-	/* CU-5: RICERCA DINAMICA DEL CATALOGO (consumata dal componente React) */
+	/* RICERCA DINAMICA DEL CATALOGO (consumata dal componente React) */
 
 	@GetMapping
 	public ResponseEntity<?> cercaLibri(@RequestParam(value = "ricerca", required = false) String ricerca,

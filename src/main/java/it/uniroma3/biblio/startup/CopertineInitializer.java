@@ -34,6 +34,7 @@ public class CopertineInitializer implements CommandLineRunner {
 
     @Override
     public void run(String... args) {
+    	/* legge il file di cache */
         Properties cache = this.copertineCacheService.carica();
 
         if (cache.isEmpty()) {
@@ -41,12 +42,16 @@ public class CopertineInitializer implements CommandLineRunner {
         }
 
         int aggiornati = 0;
-
+        
+        /* cicla su ogni riga trovata dentro il file .properties */
         for (Map.Entry<Object, Object> entry : cache.entrySet()) {
             String isbn = (String) entry.getKey();
             String url = (String) entry.getValue();
-
+            
+            //recupera il libro 
             Optional<Libro> libroOpt = this.libroRepository.findByIsbn(isbn);
+            /* se il libro è presenta controlla se l'url è diverso e carica quello che ha recuperato dal file
+             */
             if (libroOpt.isPresent()) {
                 Libro libro = libroOpt.get();
                 if (!url.equals(libro.getCopertinaUrl())) {

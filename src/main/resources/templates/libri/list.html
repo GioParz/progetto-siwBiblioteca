@@ -77,22 +77,23 @@
 					</td>
 					<td th:text="${libro.titolo}">Titolo Libro</td>
 					<td>
-						<a th:if="${libro.autore != null}" th:href="@{/autore/{id}(id=${libro.autore.id})}"
-							class="action-link-view"
-							th:text="${libro.autore.nome} + ' ' + ${libro.autore.cognome}">Autore</a>
+						<a th:href="@{/autore/{id}(id=${libro.autore.id})}"
+						   class="action-link-view" th:text="${libro.autore.nome} + ' ' + ${libro.autore.cognome}">Autore</a>
 					</td>
 					<td>
-						<a th:if="${libro.genere != null}" th:href="@{/genere/{id}(id=${libro.genere.id})}"
-							class="badge-genere" th:text="${libro.genere.nome}">Genere</a>
+						<a th:href="@{/genere/{id}(id=${libro.genere.id})}"
+						   class="badge-genere" th:text="${libro.genere.nome}">Genere</a>
 					</td>
 					<td th:text="${libro.annoPubblicazione}">2020</td>
 					<td>
 						<div class="action-buttons-cell">
 							<a th:href="@{/libro/{id}(id=${libro.id})}" class="action-link-view">Visualizza</a>
-
+							
+							<!-- Modifica risevato all'ADMIN -->
 							<a sec:authorize="hasAuthority('ADMIN')" th:href="@{/admin/libro/{id}/edit(id=${libro.id})}"
 								class="action-link-edit">Modifica</a>
-
+							
+							<!-- Elimina risevato all'ADMIN -->
 							<form sec:authorize="hasAuthority('ADMIN')"
 								th:action="@{/admin/libro/{id}/delete(id=${libro.id})}" method="post"
 								onsubmit="return confirm('Sei sicuro di voler eliminare questo libro dal catalogo?');">

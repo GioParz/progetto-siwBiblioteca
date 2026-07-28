@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import it.uniroma3.biblio.exception.LibroDuplicatoException;
 import it.uniroma3.biblio.exception.LibroInUsoException;
 import it.uniroma3.biblio.exception.ResourceNotFoundException;
 import it.uniroma3.biblio.model.Libro;
@@ -51,7 +52,7 @@ public class LibroController {
 	    this.copertineCacheService = copertineCacheService;
 	}
 
-	/* CONSULTAZIONE PUBBLICA DEL CATALOGO (fallback server-side, oltre alla ricerca live React) */
+	/* CONSULTAZIONE PUBBLICA DEL CATALOGO (con ricerca, compresa quella live di React) */
 
 	@GetMapping("/libri")
 	public String getLibri(@RequestParam(value = "ricerca", required = false) String ricerca,
@@ -123,6 +124,11 @@ public class LibroController {
 
 	    try {
 	        this.libroService.save(libro);
+	    } catch (LibroDuplicatoException e) {
+	    	bindingResult.reject("libro.duplicate", e.getMessage());
+	    	model.addAttribute("autori", this.autoreService.findAll());
+	        model.addAttribute("generi", this.genereService.findAll());
+	        return "admin/libri/form";
 	    } catch (DataIntegrityViolationException e) {
 	        bindingResult.rejectValue("isbn", "libro.isbnDuplicato");
 	        model.addAttribute("autori", this.autoreService.findAll());
@@ -131,7 +137,7 @@ public class LibroController {
 	    }
 
 	    // Salvataggio riuscito: se c'è una copertina, la ricordiamo nella cache locale
-	    // così sopravvive ai riavvii (vedi CopertineInitializer).
+	    // così sopravvive ai riavvii
 	    this.copertineCacheService.salva(libro.getIsbn(), libro.getCopertinaUrl());
 
 	    return "redirect:/libri";
@@ -183,6 +189,11 @@ public class LibroController {
 
 	    try {
 	        this.libroService.save(libroModificato);
+	    } catch (LibroDuplicatoException e) {
+	    	bindingResult.reject("libro.duplicato", e.getMessage());
+	    	model.addAttribute("autori", this.autoreService.findAll());
+	        model.addAttribute("generi", this.genereService.findAll());
+	        return "admin/libri/form";
 	    } catch (DataIntegrityViolationException e) {
 	        bindingResult.rejectValue("isbn", "libro.isbnDuplicato", "Esiste già un libro con questo ISBN.");
 	        model.addAttribute("autori", this.autoreService.findAll());

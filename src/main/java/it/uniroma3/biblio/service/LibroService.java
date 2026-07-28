@@ -5,6 +5,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 
+import it.uniroma3.biblio.exception.LibroDuplicatoException;
 import it.uniroma3.biblio.exception.LibroInUsoException;
 import it.uniroma3.biblio.exception.ResourceNotFoundException;
 import it.uniroma3.biblio.model.Genere;
@@ -39,6 +40,14 @@ public class LibroService {
 
     @Transactional(isolation = Isolation.READ_COMMITTED)
     public Libro save(Libro libro) {
+    	
+    	boolean duplicato = libro.getId() == null
+    			? this.libroRepository.existsByTitolo(libro.getTitolo())
+    			: this.libroRepository.existsByTitoloAndIdNot(libro.getTitolo(), libro.getId());
+    	
+    	if(duplicato)
+    		throw new LibroDuplicatoException(libro.getTitolo());
+    	
         return this.libroRepository.save(libro);
     }
 
@@ -55,7 +64,7 @@ public class LibroService {
 
     public List<Libro> cercaLibri(String query, Long genereId) {
         if ((query == null || query.isBlank()) && genereId == null) {
-            return this.findAll(); // ora già ottimizzato, vedi sopra
+            return this.findAll();
         }
 
         Genere genere = null;

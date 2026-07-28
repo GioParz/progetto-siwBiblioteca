@@ -33,6 +33,7 @@
 		<div th:unless="${#lists.isEmpty(generi)}" class="genre-badges-row">
 			<a th:each="genere : ${generi}" th:href="@{/genere/{id}(id=${genere.id})}" class="badge-genere"
 				th:text="${genere.nome}">Genere</a>
+			<a th:href="@{/generi}" class="back-link">Vai all'elenco completo dei generi →</a>
 		</div>
 
 		<!-- Il motore dei consigli è una funzionalità riservata: qui compare solo un invito -->
@@ -45,6 +46,14 @@
 
 		<div sec:authorize="isAuthenticated()" class="margin-top-lg">
 			<a th:href="@{/libreria}" class="back-link">Vai alla tua Libreria e ai tuoi consigli di lettura →</a>
+		</div>
+		
+		<!-- Sezione riservata all'Amministratore -->
+		<div sec:authorize="hasAuthority('ADMIN')" class="admin-separation-zone">
+			<p>Sei loggato come Amministratore:</p>
+			<div class="buttons-container">
+				<a th:href="@{/admin/index}" class="main-link admin-btn">Pannello Amministratore</a>
+			</div>
 		</div>
 
 	</main>

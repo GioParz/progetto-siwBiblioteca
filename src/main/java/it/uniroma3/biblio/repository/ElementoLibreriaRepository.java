@@ -1,7 +1,6 @@
 package it.uniroma3.biblio.repository;
 
 import java.util.List;
-import java.util.Optional;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.query.Param;
@@ -13,10 +12,14 @@ import it.uniroma3.biblio.model.Libro;
 import it.uniroma3.biblio.model.Utente;
 
 public interface ElementoLibreriaRepository extends CrudRepository<ElementoLibreria, Long> {
-
+	
+	boolean existsByUtenteAndLibro(Utente utente, Libro libro);
+    
+    boolean existsByLibroId(Long libroId);
+    
     /**
      * Caso d'uso: "visualizzazione della libreria personale" (pagina /libreria), che per
-     * ogni scheda di lettura mostra titolo, copertina e AUTORE del libro collegato.
+     * ogni scheda di lettura mostra titolo, copertina e autore del libro collegato.
      *
      * Senza questo metodo, ElementoLibreriaService.findByUtente() genera un N+1 "a due
      * livelli": ElementoLibreria.libro è @ManyToOne EAGER non joinato (1 query aggiuntiva
@@ -29,33 +32,24 @@ public interface ElementoLibreriaRepository extends CrudRepository<ElementoLibre
            "LEFT JOIN FETCH l.autore " +
            "WHERE el.utente = :utente")
     List<ElementoLibreria> findByUtenteWithLibroEAutore(@Param("utente") Utente utente);
-
-    Optional<ElementoLibreria> findByUtenteAndLibro(Utente utente, Libro libro);
-
-    boolean existsByUtenteAndLibro(Utente utente, Libro libro);
-    
-    boolean existsByLibroId(Long libroId);
     
     /**
-     * Come findGeneriPreferitiDaUtente, ma con il "peso" (numero di libri di quel genere
-     * valutati 4+ stelle): usato dal motore dei consigli sia per ordinare i generi tra
-     * loro sia per ordinare i libri ALL'INTERNO di ciascuna fascia di rilevanza.
+     * Estrae i generi preferiti dall'utente: i generi con più libri valutati 4+ stelle, con peso
      */
     @Query("SELECT el.libro.genere AS genere, COUNT(el.libro.genere) AS peso FROM ElementoLibreria el " +
            "WHERE el.utente = :utente AND el.valutazione >= 4 " +
            "GROUP BY el.libro.genere " +
            "ORDER BY COUNT(el.libro.genere) DESC")
     List<GenerePreferito> findGeneriPreferitiConPesoDaUtente(@Param("utente") Utente utente);
-
+    
+    /* projection jpa */
     interface GenerePreferito {
         Genere getGenere();
         Long getPeso();
     }
 
     /**
-     * Estrae gli autori preferiti dall'utente: gli autori con più libri valutati 4+ stelle,
-     * dal più votato al meno votato. Usata dal motore dei consigli insieme ai generi
-     * preferiti (vedi ConsigliService.calcolaLibriConsigliati).
+     * Estrae gli autori preferiti dall'utente: gli autori con più libri valutati 4+ stelle, con peso
      */
     @Query("SELECT el.libro.autore AS autore, COUNT(el.libro.autore) AS peso FROM ElementoLibreria el " +
             "WHERE el.utente = :utente AND el.valutazione >= 4 " +

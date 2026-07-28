@@ -61,8 +61,7 @@ public class ConsigliService {
             return List.of();
         }
 
-        // peso per autore: in base alla posizione nella lista già ordinata per rilevanza
-        // (findAutoriPreferitiDaUtente è già ORDER BY COUNT DESC)
+        // peso per autore: numero di libri di quell'autore valutati 4-5 stelle
         Map<Autore, Long> pesoAutore = new HashMap<>();
         for (AutorePreferito ap : autoriPreferiti) {
             pesoAutore.put(ap.getAutore(), ap.getPeso());
@@ -106,7 +105,10 @@ public class ConsigliService {
             // perché arriva solo dalle due query di suggerimento sopra
         }
 
-        // ordinamento interno a ciascuna fascia, dal più rilevante
+        /*
+         * criterio di ordinamento per rilevanza basato sui pesi dei generi e autori preferiti:
+         * punteggio(l)=pesoGenere(l.genere)+pesoAutore(l.autore)
+         */
         Comparator<Libro> perRilevanza = Comparator
                 .comparingLong((Libro l) -> pesoGenere.getOrDefault(l.getGenere(), 0L)
                         + pesoAutore.getOrDefault(l.getAutore(), 0L))

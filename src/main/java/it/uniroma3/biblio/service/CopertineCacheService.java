@@ -22,7 +22,6 @@ import org.springframework.stereotype.Service;
 @Service
 public class CopertineCacheService {
 
-    // Percorso configurabile in application.properties con app.copertine.cache-path
     // Default: file "copertine-cache.properties" nella cartella da cui parte l'app
     // (fuori da src/, quindi sopravvive a mvn clean, ricompilazioni e ddl-auto=create).
     @Value("${app.copertine.cache-path:data/copertine-cache.properties}")
@@ -32,16 +31,19 @@ public class CopertineCacheService {
         if (isbn == null || isbn.isBlank() || url == null || url.isBlank()) {
             return;
         }
-
+        
+        /* carica la mappa di file .properties */
         Properties props = carica();
         props.setProperty(isbn, url);
-
+        
+        /* controlla se la cartella data esiste altrimenti la crea */
         File file = new File(this.cachePath);
         File parent = file.getParentFile();
         if (parent != null) {
             parent.mkdirs();
         }
-
+        
+        /* apre il file e salva le coppie di proprietà */
         try (FileOutputStream out = new FileOutputStream(file)) {
             props.store(out, "Cache ISBN -> URL Cloudinary copertine (generata automaticamente, non modificare a mano)");
         } catch (IOException e) {
@@ -50,7 +52,11 @@ public class CopertineCacheService {
             System.err.println("[CopertineCacheService] Impossibile scrivere la cache copertine: " + e.getMessage());
         }
     }
-
+    
+    /**
+     * legge il file da disco se esiste
+     * @return un oggetto properties (una Map<String, String> nativa di java per leggere file .properties
+     */
     public synchronized Properties carica() {
         Properties props = new Properties();
         File file = new File(this.cachePath);

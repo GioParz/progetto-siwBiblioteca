@@ -31,17 +31,14 @@
 			<img th:if="${libro.copertinaUrl != null and !libro.copertinaUrl.isEmpty()}" th:src="${libro.copertinaUrl}"
 				alt="Copertina" class="book-cover-small" />
 			<div th:unless="${libro.copertinaUrl != null and !libro.copertinaUrl.isEmpty()}"
-				class="book-cover-small book-cover-placeholder">📖</div>
+				class="book-cover-small book-cover-placeholder"> 📖 </div>
 
 			<div class="library-item-details">
-				<a th:href="@{/libro/{id}(id=${libro.id})}" class="library-item-title" th:text="${libro.titolo}">Titolo
-					Libro</a>
+				<a th:href="@{/libro/{id}(id=${libro.id})}" class="library-item-title" th:text="${libro.titolo}">Titolo Libro</a>
 				<div class="library-item-meta">
-					<span th:if="${libro.autore != null}"
-						th:text="${libro.autore.nome} + ' ' + ${libro.autore.cognome}">Autore</span>
+					<span th:text="${libro.autore.nome} + ' ' + ${libro.autore.cognome}">Autore</span>
 					&middot;
-					<span th:if="${libro.genere != null}" class="badge-genere"
-						th:text="${libro.genere.nome}">Genere</span>
+					<span class="badge-genere" th:text="${libro.genere.nome}">Genere</span>
 				</div>
 			</div>
 		</div>

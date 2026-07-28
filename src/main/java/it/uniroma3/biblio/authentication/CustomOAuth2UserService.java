@@ -18,7 +18,8 @@ import it.uniroma3.biblio.model.Utente;
 import it.uniroma3.biblio.repository.CredentialsRepository;
 import it.uniroma3.biblio.repository.UtenteRepository;
 
-@Service
+                                             //estende la classe di spring security che gestisce il protocollo di OpenID Connect
+@Service									 //permette di fare override di loadUser e definire la mia logica personalizzata		
 public class CustomOAuth2UserService extends OidcUserService {
 
 	private final CredentialsRepository credentialsRepository;
@@ -35,9 +36,11 @@ public class CustomOAuth2UserService extends OidcUserService {
 	@Override
 	@Transactional
 	public OidcUser loadUser(OidcUserRequest userRequest) throws OAuth2AuthenticationException {
-
+		
+		//fa fare a spring la prima chiamata a google per scaricare i dati del profilo
 		OidcUser oidcUser = super.loadUser(userRequest);
-
+		
+		//estrae i dati dalla risposta json di google
 		String email = oidcUser.getAttribute("email");
 		String nome = oidcUser.getAttribute("given_name");
 		String cognome = oidcUser.getAttribute("family_name");
@@ -45,21 +48,26 @@ public class CustomOAuth2UserService extends OidcUserService {
 		if (email == null) {
 			throw new OAuth2AuthenticationException("Email non fornita da Google");
 		}
-
+		
+		//cerca se ci sono già credenziali con quell'email come username
 		Credentials credentials = this.credentialsRepository.findByUsername(email).orElse(null);
 
 		if (credentials == null) {
+			//cerca se già esisteva l'utente con quell'email
 			Utente utente = this.utenteRepository.findByEmail(email).orElse(null);
-
+			
+			//se non esisteva ne crea uno nuovo con mail e nome/cognome di google
 			if (utente == null) {
 				utente = new Utente();
 				utente.setEmail(email);
 				utente.setNome(nome != null && !nome.isBlank() ? nome : "Utente");
 				utente.setCognome(cognome != null && !cognome.isBlank() ? cognome : "Google");
 			}
-
+			
+			//crea anche le credenziali associate all'utente
 			credentials = new Credentials();
 			credentials.setUsername(email);
+			//genera una password segreta impossibile da indovinare (perche il DB richiede una password non null)
 			credentials.setPassword(this.passwordEncoder.encode(UUID.randomUUID().toString()));
 			credentials.setRuolo(RuoloUtente.USER);
 			credentials.setOauth(true);
@@ -68,7 +76,9 @@ public class CustomOAuth2UserService extends OidcUserService {
 			this.credentialsRepository.save(credentials);
 		}
 
-		// avvolge il DefaultOidcUser di Spring con le authority corrette (ADMIN/USER)
+		/**
+		 * crea un oggetto DefaultOidcUser personalizzato con i ruoli del mio database (ADMIN/USER)
+		 */
 		return new DefaultOidcUser(
 				java.util.List.of(new SimpleGrantedAuthority(credentials.getRuolo().name())),
 				oidcUser.getIdToken(),

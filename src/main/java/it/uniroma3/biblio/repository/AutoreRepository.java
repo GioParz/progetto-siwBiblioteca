@@ -11,9 +11,7 @@ import it.uniroma3.biblio.model.Autore;
 
 public interface AutoreRepository extends CrudRepository<Autore, Long> {
 
-    public boolean existsByNomeAndCognome(String nome, String cognome);
-    
-    public Optional<Autore> findByNomeAndCognome(String nome, String cognome);
+    boolean existsByNomeAndCognome(String nome, String cognome);
 
     /**
      * Usato dalla ricerca globale (barra di ricerca presente in tutte le pagine): trova gli

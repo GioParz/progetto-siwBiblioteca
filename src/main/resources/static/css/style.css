@@ -344,6 +344,7 @@ body {
    ========================================================================== */
 .library-table {
     width: 100%;
+	table-layout: fixed;
     border-collapse: collapse;
     margin: 25px 0;
     font-size: 14px;
@@ -385,6 +386,7 @@ body {
     gap: 10px;
     justify-content: center;
     align-items: center;
+	flex-wrap: wrap;
 }
 
 .action-link-view, .action-link-edit, .action-link-delete {
@@ -595,6 +597,26 @@ body {
 
 .form-group textarea {
     resize: vertical;
+}
+
+/* Stile per il bottone interno di seleziona file */
+.form-group input[type="file"]::file-selector-button {
+    background-color: #5a3f26;
+    color: #f0e6d2;
+    border: 1px solid #b89b6c;
+    padding: 6px 12px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-family: inherit;
+    font-size: 12px;
+    margin-right: 12px;
+    transition: all 0.2s ease;
+}
+
+/* Effetto al passaggio del mouse sul bottone */
+.form-group input[type="file"]::file-selector-button:hover {
+    background-color: #b89b6c;
+    color: #241a10;
 }
 
 /* Ricerca e filtri del catalogo pubblico */

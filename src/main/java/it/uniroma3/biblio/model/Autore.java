@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -37,7 +36,7 @@ public class Autore {
     @Column(length = 2000, nullable = true)
     private String biografia;
 
-    @OneToMany(mappedBy = "autore", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "autore")
     private List<Libro> libri = new ArrayList<>();
 
 	public Long getId() {

@@ -38,9 +38,8 @@
 				<tr th:each="libro : ${libri}">
 					<td th:text="${libro.titolo}">Titolo</td>
 					<td>
-						<a th:if="${libro.autore != null}" th:href="@{/autore/{id}(id=${libro.autore.id})}"
-							class="action-link-view"
-							th:text="${libro.autore.nome} + ' ' + ${libro.autore.cognome}">Autore</a>
+						<a th:href="@{/autore/{id}(id=${libro.autore.id})}"
+							class="action-link-view" th:text="${libro.autore.nome} + ' ' + ${libro.autore.cognome}">Autore</a>
 					</td>
 					<td th:text="${libro.annoPubblicazione}">Anno</td>
 					<td>

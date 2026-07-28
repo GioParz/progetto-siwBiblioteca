@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 
+import it.uniroma3.biblio.exception.AutoreDuplicatoException;
 import it.uniroma3.biblio.model.Autore;
 import it.uniroma3.biblio.service.AutoreService;
 import jakarta.validation.Valid;
@@ -34,7 +35,7 @@ public class AutoreController {
 	@GetMapping("/autore/{id}")
 	public String getAutore(@PathVariable("id") Long id, Model model) {
 
-		Autore autore = this.autoreService.findById(id);
+		Autore autore = this.autoreService.findByIdConLibri(id);
 
 		model.addAttribute("autore", autore);
 		model.addAttribute("libri", autore.getLibri());
@@ -42,7 +43,7 @@ public class AutoreController {
 		return "autori/show";
 	}
 
-	/* INSERIMENTO NUOVO AUTORE (Admin, usato anche dal form di creazione Libro) */
+	/* INSERIMENTO NUOVO AUTORE */
 
 	@GetMapping("/admin/autore/new")
 	public String mostraFormAutore(Model model) {
@@ -58,7 +59,12 @@ public class AutoreController {
 		if (bindingResult.hasErrors())
 			return "admin/autori/form";
 
-		this.autoreService.save(autore);
+		try {
+			this.autoreService.save(autore);
+		} catch (AutoreDuplicatoException e) {
+			bindingResult.reject("autore.duplicato", e.getMessage());
+			return "admin/autori/form";
+		}
 
 		return "redirect:/autori";
 	}

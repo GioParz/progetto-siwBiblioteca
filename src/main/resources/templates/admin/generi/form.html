@@ -17,12 +17,6 @@
 
 		<form th:action="@{/admin/generi}" th:object="${genere}" method="post" class="library-form">
 
-			<div th:if="${#fields.hasGlobalErrors()}" class="error-msg">
-				<ul class="no-margin">
-					<li th:each="err : ${#fields.globalErrors()}" th:text="${err}">Errore di validazione globale</li>
-				</ul>
-			</div>
-
 			<div class="form-group">
 				<label>Nome del Genere</label>
 				<input type="text" th:field="*{nome}" placeholder="Es: Fantasy" />

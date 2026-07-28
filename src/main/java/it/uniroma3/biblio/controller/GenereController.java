@@ -1,6 +1,5 @@
 package it.uniroma3.biblio.controller;
 
-import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -9,6 +8,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 
+import it.uniroma3.biblio.exception.GenereDuplicatoException;
 import it.uniroma3.biblio.model.Genere;
 import it.uniroma3.biblio.service.GenereService;
 import jakarta.validation.Valid;
@@ -61,7 +61,7 @@ public class GenereController {
 
 		try {
 			this.genereService.save(genere);
-		} catch (DataIntegrityViolationException e) {
+		} catch (GenereDuplicatoException e) {
 			bindingResult.rejectValue("nome", "genere.duplicato", e.getMessage());
 			return "admin/generi/form";
 		}

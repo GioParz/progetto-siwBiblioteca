@@ -12,8 +12,6 @@ import it.uniroma3.biblio.model.Genere;
 public interface GenereRepository extends CrudRepository<Genere, Long> {
 
     public boolean existsByNome(String nome);
-    
-    public Optional<Genere> findByNome(String nome);
 
     /**
      * Usato dalla ricerca globale (barra di ricerca presente in tutte le pagine): trova i

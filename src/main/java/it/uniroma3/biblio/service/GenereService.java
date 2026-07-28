@@ -5,6 +5,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 
+import it.uniroma3.biblio.exception.GenereDuplicatoException;
 import it.uniroma3.biblio.exception.ResourceNotFoundException;
 import it.uniroma3.biblio.model.Genere;
 import it.uniroma3.biblio.repository.GenereRepository;
@@ -45,6 +46,12 @@ public class GenereService {
 
     @Transactional(isolation = Isolation.READ_COMMITTED)
     public Genere save(Genere genere) {
+    	
+    	boolean duplicato = this.genereRepository.existsByNome(genere.getNome());
+    	
+    	if(duplicato)
+    		throw new GenereDuplicatoException(genere.getNome());
+    	
         return this.genereRepository.save(genere);
     }
 }

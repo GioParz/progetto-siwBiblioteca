@@ -5,6 +5,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 
+import it.uniroma3.biblio.exception.AutoreDuplicatoException;
 import it.uniroma3.biblio.exception.ResourceNotFoundException;
 import it.uniroma3.biblio.model.Autore;
 import it.uniroma3.biblio.repository.AutoreRepository;
@@ -44,6 +45,12 @@ public class AutoreService {
 
     @Transactional(isolation = Isolation.READ_COMMITTED)
     public Autore save(Autore autore) {
+    	
+    	boolean duplicato = this.autoreRepository.existsByNomeAndCognome(autore.getNome(), autore.getCognome());
+    	
+    	if(duplicato)
+    		throw new AutoreDuplicatoException(autore.getNome(), autore.getCognome());
+    	
         return this.autoreRepository.save(autore);
     }
 }
